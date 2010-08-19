@@ -10,7 +10,5 @@ JDK 1.5
 
 == Road Map
 
-* allow "shallow/deep" fetching of character, which will optionally fetch associated achievements,
-talents, reputation, and statistics.
-* add optional param to fetchCharacterAchievements allowing user to not fetch achievement names/descriptions,
-and to list which categories to return (e.g. ICC 25, Ulduar 10, etc)
+* allow "shallow/deep" fetching of character, which will optionally fetch associated achievements, talents, reputation, and statistics.
+* add optional param to fetchCharacterAchievements allowing user to not fetch achievement names/descriptions, and to list which categories to return (e.g. ICC 25, Ulduar 10, etc)
