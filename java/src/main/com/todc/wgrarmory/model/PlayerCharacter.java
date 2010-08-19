@@ -77,6 +77,9 @@ public class PlayerCharacter {
     private List<TalentSpec> m_talentSpecs = new ArrayList<TalentSpec>();
 
     private List<Profession> m_professions = new ArrayList<Profession>();
+    private List<Profession> m_secondaryProfessions = new ArrayList<Profession>();
+
+    private List<Item> m_items = new ArrayList<Item>();
 
 
     // ------------------------------------------------------ Getters / Setters
@@ -194,7 +197,15 @@ public class PlayerCharacter {
         m_talentSpecs = talentSpecs;
     }
 
-    
+    public List<Item> getItems() {
+        return m_items;
+    }
+
+    public void setItems(List<Item> items) {
+        m_items = items;
+    }
+
+
     // --------------------------------------------------------- Public Methods
 
 
@@ -221,10 +232,6 @@ public class PlayerCharacter {
         m_talentSpecs.add(spec);
     }
 
-    public void addProfession(Profession prof) {
-        m_professions.add(prof);
-    }
-
     public TalentSpec getPrimaryTalentSpec() {
         for (TalentSpec t : m_talentSpecs) {
             if (t.getNumber() == 1) {
@@ -245,36 +252,68 @@ public class PlayerCharacter {
         return null;
     }
 
+    public void addProfession(Profession prof) {
+        m_professions.add(prof);
+    }
+
+    public void addSecondaryProfession(Profession prof) {
+        m_secondaryProfessions.add(prof);
+    }
+
+    public void addItem(Item item) {
+        m_items.add(item);
+    }
+
 
     public String toString() {
-        String s = "[" +
-               "name = " + m_name + "; " +
-               "faction = " + m_faction + "; " +
-               "gender = " + m_gender + "; " +
-               "race = " + m_race + "; " +
-               "class = " + m_playerClass + "; " +
-               "level = " + m_level + "; " +
-               "titleId = " + m_titleId + "; " +
-               "title = " + m_title + "; " +
-               "achievementPoints = " + m_achievementPoints + "; " +
-               "battlegroup = " + m_battlegroup + "; " +
-               "guildName = " + m_guildName + "; " +
-               "realm = " + m_realm + "; ";
+        StringBuffer sb = new StringBuffer(
+           "[" +
+           "name = " + m_name + "; " +
+           "faction = " + m_faction + "; " +
+           "gender = " + m_gender + "; " +
+           "race = " + m_race + "; " +
+           "class = " + m_playerClass + "; " +
+           "level = " + m_level + "; " +
+           "titleId = " + m_titleId + "; " +
+           "title = " + m_title + "; " +
+           "achievementPoints = " + m_achievementPoints + "; " +
+           "battlegroup = " + m_battlegroup + "; " +
+           "guildName = " + m_guildName + "; " +
+           "realm = " + m_realm + "; "
+        );
 
-        s += "talentSpecs = [";
+        sb.append("talentSpecs = [");
         for (TalentSpec spec : m_talentSpecs) {
-            s += spec + ", ";
+            sb.append(spec + ", ");
         }
-        s += "]; ";
+        sb.append("]; ");
 
-        s += "professions = [";
+        sb.append("professions = [");
         for (Profession prof : m_professions) {
-            s += prof + ", ";
+            sb.append(prof + ", ");
         }
-        s += "]";
+        sb.append("]; ");
 
-        s += "]";
+        sb.append("professions = [");
+        for (Profession prof : m_professions) {
+            sb.append(prof + ", ");
+        }
+        sb.append("]; ");
 
-        return s;
+        sb.append("secondaryProfessions = [");
+        for (Profession prof : m_secondaryProfessions) {
+            sb.append(prof + ", ");
+        }
+        sb.append("]");
+
+        sb.append("items = [");
+        for (Item item : m_items) {
+            sb.append(item + ", ");
+        }
+        sb.append("]");
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }

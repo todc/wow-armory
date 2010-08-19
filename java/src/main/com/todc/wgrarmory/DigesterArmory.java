@@ -12,6 +12,7 @@ package com.todc.wgrarmory;
 import java.io.*;
 import java.net.*;
 
+import com.todc.wgrarmory.model.Item;
 import org.apache.commons.digester.Digester;
 
 import org.slf4j.Logger;
@@ -108,6 +109,18 @@ public class DigesterArmory extends AbstractArmory {
         d.addObjectCreate("page/characterInfo/characterTab/professions/skill", Profession.class);
         d.addSetNext("page/characterInfo/characterTab/professions/skill", "addProfession");
         d.addSetProperties("page/characterInfo/characterTab/professions/skill");
+
+        d.addObjectCreate("page/characterInfo/characterTab/secondaryProfessions/skill", Profession.class);
+        d.addSetNext("page/characterInfo/characterTab/secondaryProfessions/skill", "addSecondaryProfession");
+        d.addSetProperties("page/characterInfo/characterTab/secondaryProfessions/skill");
+
+        d.addObjectCreate("page/characterInfo/characterTab/items/item", Item.class);
+        d.addSetNext("page/characterInfo/characterTab/items/item", "addItem");
+        d.addSetProperties(
+            "page/characterInfo/characterTab/items/item",
+            "permanentEnchantItemId",
+            "enchantId"
+        );
     }
 
 
