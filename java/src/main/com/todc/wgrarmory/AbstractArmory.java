@@ -32,25 +32,21 @@ public abstract class AbstractArmory implements Armory {
 
     private Logger LOG = LoggerFactory.getLogger(AbstractArmory.class);
 
-    protected Properties config = null;
+    private static final String CONFIG_URL_KEY = "armory.url";
 
 
     // ----------------------------------------------------- Instance Variables
 
 
-    private Proxy m_proxy;
+    protected Properties config = null;
 
-    private SimpleDateFormat m_sdfShort = new SimpleDateFormat("yyyy-MM-ddZ");
-    private SimpleDateFormat m_sdfLong = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    private Proxy m_proxy;
 
 
     // ----------------------------------------------------------- Constructors
 
 
     public AbstractArmory() {
-        m_sdfShort.setTimeZone(TimeZone.getTimeZone("GMT"));
-        m_sdfLong.setTimeZone(TimeZone.getTimeZone("GMT"));
-
         try {
             config = new Properties();
             URL url = ClassLoader.getSystemResource("armory.properties");
@@ -114,6 +110,7 @@ public abstract class AbstractArmory implements Armory {
             switch (responseCode)
             {
                 //
+                // HTTP 503
                 // Blizzard throttles client requests to about 1.5/second. You can
                 // burst upwards of 60 requests in 45 seconds, but after that Blizz
                 // will shut you out with a 503 error.
@@ -122,8 +119,9 @@ public abstract class AbstractArmory implements Armory {
                     throw new TooManyRequestsException("Too many armory requests made recently. HTTP Code " + responseCode);
 
                 //
-                // Pretty sure Blizz assigns this some other meaning, but I have
-                // to double check to figure out the appropriate exception to throw.
+                // HTTP 500
+                // This will be returned when searching for a guild that doesn't
+                // exist. Probably for other errors too.
                 //
                 case HttpURLConnection.HTTP_INTERNAL_ERROR:
                     throw new UnknownArmoryException("Internal Server Error. HTTP Code " + responseCode);
@@ -136,5 +134,10 @@ public abstract class AbstractArmory implements Armory {
             }
 
         }
+    }
+
+
+    protected String getArmoryHost(String regionCode) {
+        return config.getProperty(CONFIG_URL_KEY + "." + regionCode.toLowerCase());
     }
 }

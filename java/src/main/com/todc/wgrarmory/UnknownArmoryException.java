@@ -12,7 +12,7 @@ package com.todc.wgrarmory;
 /**
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
-public class UnknownArmoryException extends Exception {
+public class UnknownArmoryException extends ArmoryException {
 
     public UnknownArmoryException() {
         super();

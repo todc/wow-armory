@@ -12,7 +12,7 @@ package com.todc.wgrarmory;
 /**
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
-public class CharacterNotFoundException extends Exception {
+public class CharacterNotFoundException extends ArmoryException {
 
     public CharacterNotFoundException() {
         super();

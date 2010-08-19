@@ -12,21 +12,21 @@ package com.todc.wgrarmory;
 /**
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
-public class TooManyRequestsException extends ArmoryException {
+public class ArmoryException extends Exception {
 
-    public TooManyRequestsException() {
+    public ArmoryException() {
         super();
     }
 
-    public TooManyRequestsException(String s) {
+    public ArmoryException(String s) {
         super(s);
     }
 
-    public TooManyRequestsException(String s, Throwable throwable) {
+    public ArmoryException(String s, Throwable throwable) {
         super(s, throwable);
     }
 
-    public TooManyRequestsException(Throwable throwable) {
+    public ArmoryException(Throwable throwable) {
         super(throwable);
     }
 }

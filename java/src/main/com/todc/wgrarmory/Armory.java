@@ -10,7 +10,10 @@ package com.todc.wgrarmory;
 
 
 import java.net.Proxy;
+import java.util.List;
 
+import com.todc.wgrarmory.model.Achievement;
+import com.todc.wgrarmory.model.AchievementCategory;
 import com.todc.wgrarmory.model.PlayerCharacter;
 
 
@@ -23,6 +26,10 @@ public interface Armory {
 
     public Proxy getProxy();
 
-    public PlayerCharacter fetchCharacter(String charName, String realmName, String regionCode);
+    public PlayerCharacter fetchCharacter(String charName, String realmName, String regionCode)
+            throws Exception;
+
+    public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category)
+            throws Exception;
 
 }
