@@ -9,6 +9,10 @@
 package com.todc.wgrarmory.model;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
@@ -29,11 +33,11 @@ public class PlayerCharacter {
     public static final int TAUREN = 6;
     public static final int TROLL = 8;
     public static final int UNDEAD = 5;
-    public static final int DRAENEI = 0;
-    public static final int DWARF = 0;
-    public static final int GNOME = 0;
-    public static final int HUMAN = 0;
-    public static final int NIGHT_ELF = 0;
+    public static final int DRAENEI = 11;
+    public static final int DWARF = 3;
+    public static final int GNOME = 7;
+    public static final int HUMAN = 1;
+    public static final int NIGHT_ELF = 4;
 
     public static final int DEATH_KNIGHT = 6;
     public static final int DRUID = 11;
@@ -52,7 +56,7 @@ public class PlayerCharacter {
 
     private String[] m_factionNames = new String[] {"Alliance", "Horde"};
     private String[] m_genderNames = new String[] {"Male", "Female"};
-    private String[] m_raceNames = new String[] {"", "1", "Orc", "3", "4", "Undead", "Tauren", "7", "Troll", "9", "Blood Elf"};
+    private String[] m_raceNames = new String[] {"", "Human", "Orc", "Dwarf", "Night Elf", "Undead", "Tauren", "Gnome", "Troll", "", "Blood Elf", "Draenei"};
     private String[] m_classNames = new String[] {"", "Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "", "Druid"};
 
     private String m_name;
@@ -60,6 +64,19 @@ public class PlayerCharacter {
     private int m_gender;
     private int m_faction;
     private int m_race;
+    private int m_level;
+
+    private String m_battlegroup;
+    private String m_guildName;
+    private String m_realm;
+    private String m_title;
+    private int m_titleId;
+
+    private int m_achievementPoints;
+
+    private List<TalentSpec> m_talentSpecs = new ArrayList<TalentSpec>();
+
+    private List<Profession> m_professions = new ArrayList<Profession>();
 
 
     // ------------------------------------------------------ Getters / Setters
@@ -105,7 +122,79 @@ public class PlayerCharacter {
         m_faction = faction;
     }
 
+    public int getLevel() {
+        return m_level;
+    }
 
+    public void setLevel(int level) {
+        m_level = level;
+    }
+
+    public String getBattlegroup() {
+        return m_battlegroup;
+    }
+
+    public void setBattlegroup(String battlegroup) {
+        m_battlegroup = battlegroup;
+    }
+
+    public String getGuildName() {
+        return m_guildName;
+    }
+
+    public void setGuildName(String guild) {
+        m_guildName = guild;
+    }
+
+    public String getRealm() {
+        return m_realm;
+    }
+
+    public void setRealm(String realm) {
+        m_realm = realm;
+    }
+
+    public String getTitle() {
+        return m_title;
+    }
+
+    public void setTitle(String title) {
+        m_title = title;
+    }
+
+    public int getTitleId() {
+        return m_titleId;
+    }
+
+    public void setTitleId(int titleId) {
+        m_titleId = titleId;
+    }
+
+    public int getAchievementPoints() {
+        return m_achievementPoints;
+    }
+
+    public void setAchievementPoints(int achievementPoints) {
+        m_achievementPoints = achievementPoints;
+    }
+
+    public List<Profession> getProfessions() {
+        return m_professions;
+    }
+
+    public void setProfessions(List<Profession> professions) {
+        m_professions = professions;
+    }
+
+    public List<TalentSpec> getTalentSpecs() {
+        return m_talentSpecs;
+    }
+
+    public void setTalentSpecs(List<TalentSpec> talentSpecs) {
+        m_talentSpecs = talentSpecs;
+    }
+
+    
     // --------------------------------------------------------- Public Methods
 
 
@@ -128,15 +217,64 @@ public class PlayerCharacter {
         return m_classNames[classId];
     }
 
+    public void addTalentSpec(TalentSpec spec) {
+        m_talentSpecs.add(spec);
+    }
+
+    public void addProfession(Profession prof) {
+        m_professions.add(prof);
+    }
+
+    public TalentSpec getPrimaryTalentSpec() {
+        for (TalentSpec t : m_talentSpecs) {
+            if (t.getNumber() == 1) {
+                return t;
+            }
+        }
+
+        return null;
+    }
+
+    public TalentSpec getSecondaryTalentSpec() {
+        for (TalentSpec t : m_talentSpecs) {
+            if (t.getNumber() == 2) {
+                return t;
+            }
+        }
+
+        return null;
+    }
+
 
     public String toString() {
-        return "[" +
-               "name = " + m_name + ", " +
-               "faction = " + m_faction + ", " +
-               "gender = " + m_gender + ", " +
-               "race = " + m_race + ", " +
-               "class = " + m_playerClass +
-               "]";
+        String s = "[" +
+               "name = " + m_name + "; " +
+               "faction = " + m_faction + "; " +
+               "gender = " + m_gender + "; " +
+               "race = " + m_race + "; " +
+               "class = " + m_playerClass + "; " +
+               "level = " + m_level + "; " +
+               "titleId = " + m_titleId + "; " +
+               "title = " + m_title + "; " +
+               "achievementPoints = " + m_achievementPoints + "; " +
+               "battlegroup = " + m_battlegroup + "; " +
+               "guildName = " + m_guildName + "; " +
+               "realm = " + m_realm + "; ";
 
+        s += "talentSpecs = [";
+        for (TalentSpec spec : m_talentSpecs) {
+            s += spec + ", ";
+        }
+        s += "]; ";
+
+        s += "professions = [";
+        for (Profession prof : m_professions) {
+            s += prof + ", ";
+        }
+        s += "]";
+
+        s += "]";
+
+        return s;
     }
 }
