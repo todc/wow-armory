@@ -9,6 +9,10 @@
 package com.todc.wgrarmory.model;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
  * @author <a href="mailto:odonnellt@gmail.com">Tim O'Donnell</a>
  */
@@ -18,12 +22,15 @@ public class TalentSpec {
     // ----------------------------------------------------- Instance Variables
 
 
+    private int m_number;
     private String m_name;
     private int m_treeOne;
     private int m_treeTwo;
     private int m_treeThree;
+    private String m_build;
     private boolean m_isActive;
-    private int m_number;
+
+    private List<Glyph> m_glyphs = new ArrayList<Glyph>();
 
 
     // ------------------------------------------------------ Getters / Setters
@@ -77,16 +84,57 @@ public class TalentSpec {
         m_number = number;
     }
 
+    public String getBuild() {
+        return m_build;
+    }
+
+    public void setBuild(String build) {
+        m_build = build;
+    }
+
+    public List<Glyph> getGlyphs() {
+        return m_glyphs;
+    }
+
+    public void setGlyphs(List<Glyph> glyphs) {
+        m_glyphs = glyphs;
+    }
+
 
     // --------------------------------------------------------- Public Methods
 
 
-    public String getBuild() {
+    /**
+     * Returns the talent spec's build order in t1/t2/t3 format.
+     *
+     * @return build order in short form
+     */
+    public String getShortBuild() {
         return m_treeOne + "/" + m_treeTwo + "/" + m_treeThree;
     }
 
 
+    public void addGlyph(Glyph glyph) {
+        m_glyphs.add(glyph);
+    }
+
+
     public String toString() {
-        return "[name = " + m_name + "; treeOne = " + m_treeOne + "; treeTwo = " + m_treeTwo + "; treeThree = " + m_treeThree + "; active = " + m_isActive + "; num = " + m_number + "]";
+        StringBuffer sb = new StringBuffer("[");
+        sb.append("name = " + m_name + "; ");
+        sb.append("num = " + m_number + "; ");
+        sb.append("active = " + m_isActive + "; ");
+        sb.append("treeOne = " + m_treeOne + "; ");
+        sb.append("treeTwo = " + m_treeTwo + "; ");
+        sb.append("treeThree = " + m_treeThree + "; ");
+        sb.append("build = " + m_build + "; ");
+        sb.append("glyphs = ");
+
+        for (Glyph g : m_glyphs) {
+            sb.append(g + ", ");
+        }
+        sb.append("]");
+
+        return sb.toString();
     }
 }

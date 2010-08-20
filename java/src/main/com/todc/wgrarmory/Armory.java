@@ -55,4 +55,7 @@ public interface Armory {
     public List<Faction> fetchCharacterReputation(String charName, String realmName, String regionCode)
             throws Exception;
 
+    public List<TalentSpec> fetchCharacterTalents(String charName, String realmName, String regionCode)
+            throws Exception;
+
 }

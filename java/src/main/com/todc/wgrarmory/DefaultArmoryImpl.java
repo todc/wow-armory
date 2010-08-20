@@ -241,6 +241,64 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    public List<TalentSpec> fetchCharacterTalents(String charName, String realmName, String regionCode) throws Exception {
+        String armoryHost = getArmoryHost(regionCode);
+        String rn = URLEncoder.encode(realmName, UTF8);
+        String cn = URLEncoder.encode(charName, UTF8);
+
+        String url = "http://" + armoryHost + "/character-talents.xml?r=" + rn + "&cn=" + cn + "&rhtml=n";
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+
+        List<Element> xmlTalentGroups = root.getChild("characterInfo")
+                                            .getChild("talents")
+                                            .getChildren("talentGroup");
+
+        List<TalentSpec> talents = new ArrayList<TalentSpec>();
+
+        for (Element elTalentGroup : xmlTalentGroups) {
+            TalentSpec spec = new TalentSpec();
+            spec.setNumber(elTalentGroup.getAttribute("group").getIntValue());
+            spec.setActive(elTalentGroup.getAttributeValue("active") != null);
+            spec.setName(elTalentGroup.getAttributeValue("prim"));
+
+            List<Element> xmlTalentSpecs = elTalentGroup.getChildren("talentSpec");
+
+            for (Element elTalentSpec : xmlTalentSpecs) {
+                spec.setBuild(elTalentSpec.getAttributeValue("value"));
+                spec.setTreeOne(elTalentSpec.getAttribute("treeOne").getIntValue());
+                spec.setTreeTwo(elTalentSpec.getAttribute("treeTwo").getIntValue());
+                spec.setTreeThree(elTalentSpec.getAttribute("treeThree").getIntValue());
+
+                List<Element> xmlGlyphs = elTalentGroup.getChild("glyphs").getChildren("glyph");
+
+                for (Element elGlyph : xmlGlyphs) {
+                    Glyph glyph = new Glyph();
+                    glyph.setId(elGlyph.getAttribute("id").getIntValue());
+                    glyph.setName(elGlyph.getAttributeValue("name"));
+                    glyph.setEffect(elGlyph.getAttributeValue("effect"));
+
+                    String sType = elGlyph.getAttributeValue("type");
+                    int type = 0;
+                    if (sType != null) {
+                        if (sType.equalsIgnoreCase("major")) type = Glyph.MAJOR;
+                        else if (sType.equalsIgnoreCase("minor")) type = Glyph.MINOR;
+                    }
+                    glyph.setType(type);
+
+                    spec.addGlyph(glyph);
+                }
+            }
+
+            talents.add(spec);
+        }
+
+        return talents;
+    }
+
+
     // -------------------------------------------------------- Private Methods
 
 
@@ -477,6 +535,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
         }
         */
 
+        /*
         // Test reputations
         int count = 1;
         for (int i=0; i<count; i++) {
@@ -489,6 +548,25 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
                 for (Faction f : factions) {
                     System.out.println(name + " - " + f);
+                }
+            }
+
+            Thread.sleep(3);
+        }
+        */
+
+        // Test talents
+        int count = 1;
+        for (int i=0; i<count; i++) {
+            for (String name : names) {
+                long s1 = System.currentTimeMillis();
+
+                List<TalentSpec> talents = armory.fetchCharacterTalents(name, "Dawnbringer", "US");
+
+                long e1 = System.currentTimeMillis();
+
+                for (TalentSpec ts : talents) {
+                    System.out.println(name + " - " + ts);
                 }
             }
 
