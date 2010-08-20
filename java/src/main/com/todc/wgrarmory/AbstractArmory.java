@@ -39,6 +39,10 @@ public abstract class AbstractArmory implements Armory {
 
 
     protected Properties config = null;
+    protected boolean fetchAchievementTitle = true;
+    protected boolean fetchAchievementDescriptions = true;
+    protected boolean fetchAchievementCriteria = true;
+    protected boolean fetchSubAchievements = true;
 
     private Proxy m_proxy;
 
@@ -66,6 +70,38 @@ public abstract class AbstractArmory implements Armory {
 
     public Proxy getProxy() {
         return m_proxy;
+    }
+
+    public boolean isFetchAchievementTitle() {
+        return fetchAchievementTitle;
+    }
+
+    public void setFetchAchievementTitle(boolean fetchAchievementTitle) {
+        this.fetchAchievementTitle = fetchAchievementTitle;
+    }
+
+    public boolean isFetchAchievementDescription() {
+        return fetchAchievementDescriptions;
+    }
+
+    public void setFetchAchievementDescription(boolean fetchAchievementDescriptions) {
+        this.fetchAchievementDescriptions = fetchAchievementDescriptions;
+    }
+
+    public boolean isFetchAchievementCriteria() {
+        return fetchAchievementCriteria;
+    }
+
+    public void setFetchAchievementCriteria(boolean fetchAchievementCriteria) {
+        this.fetchAchievementCriteria = fetchAchievementCriteria;
+    }
+
+    public boolean isFetchSubAchievements() {
+        return fetchSubAchievements;
+    }
+
+    public void setFetchSubAchievements(boolean fetchSubAchievements) {
+        this.fetchSubAchievements = fetchSubAchievements;
     }
 
 
