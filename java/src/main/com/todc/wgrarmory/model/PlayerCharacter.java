@@ -65,10 +65,12 @@ public class PlayerCharacter {
     private int m_faction;
     private int m_race;
     private int m_level;
+    private int m_rank;
 
     private String m_battlegroup;
     private String m_guildName;
     private String m_realm;
+    private String m_region;
     private String m_title;
     private int m_titleId;
 
@@ -133,6 +135,14 @@ public class PlayerCharacter {
         m_level = level;
     }
 
+    public int getRank() {
+        return m_rank;
+    }
+
+    public void setRank(int rank) {
+        m_rank = rank;
+    }
+
     public String getBattlegroup() {
         return m_battlegroup;
     }
@@ -155,6 +165,14 @@ public class PlayerCharacter {
 
     public void setRealm(String realm) {
         m_realm = realm;
+    }
+
+    public String getRegion() {
+        return m_region;
+    }
+
+    public void setRegion(String region) {
+        m_region = region;
     }
 
     public String getTitle() {
