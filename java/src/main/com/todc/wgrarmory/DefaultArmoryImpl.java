@@ -14,25 +14,26 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.todc.wgrarmory.model.*;
 import org.apache.commons.digester.Digester;
 
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.todc.wgrarmory.model.*;
+
 
 /**
- * Implementation of Armory using Apache Commons Digester to parse the
- * resulting XML.
+ * Default implementation of Armory interface.
  *
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
-public class DigesterArmory extends AbstractArmory {
+public class DefaultArmoryImpl extends AbstractArmory {
 
 
-    protected Logger LOG = LoggerFactory.getLogger(DigesterArmory.class);
+    protected Logger LOG = LoggerFactory.getLogger(DefaultArmoryImpl.class);
 
 
     // -------------------------------------------------------------- Constants
@@ -53,7 +54,7 @@ public class DigesterArmory extends AbstractArmory {
     // ----------------------------------------------------------- Constructors
 
 
-    public DigesterArmory() {
+    public DefaultArmoryImpl() {
         super();
 
         m_sdfShort.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -316,7 +317,7 @@ public class DigesterArmory extends AbstractArmory {
     public static void main(String... args) throws Exception {
         long start = System.currentTimeMillis();
         
-        Armory armory = new DigesterArmory();
+        Armory armory = new DefaultArmoryImpl();
         armory.setFetchAchievementTitle(true);
         armory.setFetchAchievementDescription(false);
         armory.setFetchAchievementCriteria(false);
