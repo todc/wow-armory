@@ -71,12 +71,15 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
 
     /**
-     * Retrieve guild info, including roster, from the Armory.
+     * Retrieve guild info, including roster, from the Armory. Performs HTTP
+     * request to guild-info.xml.
      *
      * @param guildName Name of the guild
      * @param realmName Name of the realm
      * @param regionCode Region code, e.g. US, EU, etc
+     *
      * @return Matching guild object
+     *
      * @throws Exception
      */
     public Guild fetchGuild(String guildName, String realmName, String regionCode) throws Exception {
@@ -127,6 +130,18 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch top-level character data including talent specs, professions, and
+     * currently equipped items. Performs HTTP request to character-sheet.xml.
+     *
+     * @param charName Name of character
+     * @param realmName Name of realm
+     * @param regionCode Region code (e.g. US, EU, etc)
+     *
+     * @return Matching PlayerCharacter object
+     *
+     * @throws Exception
+     */
     public PlayerCharacter fetchCharacter(String charName, String realmName, String regionCode)
             throws Exception
     {
@@ -155,6 +170,20 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch character achievements for the given top-level category (e.g.
+     * Dungeons and Raids = 168).
+     *
+     * @param charName Name of character
+     * @param realmName Name of realm
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param category ID of achievement category to parse. Values can be found
+     *                 in AchievementCategory.
+     *
+     * @return List of matching achievement sub-categories and achievement objects
+     *
+     * @throws Exception
+     */
     public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category)
             throws Exception
     {
@@ -162,6 +191,23 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch character achievements for the given top-level category (e.g.
+     * Dungeons and Raids = 168). Optionally limit fetch to only specific
+     * sub-categories.
+     *
+     * @param charName Name of character
+     * @param realmName Name of realm
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param category ID of achievement category to parse. Values can be found
+     *                 in AchievementCategory.
+     * @param subCategories Array of specific AchievementCategory IDs to fetch.
+     *        Pass in null to obtain all sub-categories.
+     *
+     * @return List of matching achievement sub-categories and achievement objects
+     *
+     * @throws Exception
+     */
     public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category, int[] subCategories)
             throws Exception
     {
@@ -218,6 +264,18 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch character faction reputations. Performs HTTP request to
+     * character-reputation.xml.
+     *
+     * @param charName Name of character
+     * @param realmName Name of realm
+     * @param regionCode Region code (e.g. US, EU, etc)
+     *
+     * @return List of all faction reputations
+     *
+     * @throws Exception
+     */
     public List<Faction> fetchCharacterReputation(String charName, String realmName, String regionCode) throws Exception {
         String armoryHost = getArmoryHost(regionCode);
         String rn = URLEncoder.encode(realmName, UTF8);
@@ -241,6 +299,18 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch character talents specs and glyphs. Performs HTTP request to
+     * character-talents.xml.
+     *
+     * @param charName Name of character
+     * @param realmName Name of realm
+     * @param regionCode Region code (e.g. US, EU, etc)
+     *
+     * @return List of all talent specs and associated glyphs
+     *
+     * @throws Exception
+     */
     public List<TalentSpec> fetchCharacterTalents(String charName, String realmName, String regionCode) throws Exception {
         String armoryHost = getArmoryHost(regionCode);
         String rn = URLEncoder.encode(realmName, UTF8);
