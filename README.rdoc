@@ -10,5 +10,9 @@ JDK 1.5
 
 == Road Map
 
-* allow "shallow/deep" fetching of character, which will optionally fetch associated achievements, talents, reputation, and statistics.
-* add optional param to fetchCharacterAchievements allowing user to not fetch achievement names/descriptions, and to list which categories to return (e.g. ICC 25, Ulduar 10, etc)
+* consider getting rid of Digester in favor of pure JDOM parsing. may be slightly more code for some pages, but will remove dependencies on the 3 commons jars
+
+* fetchGuild method
+* fetchCharacterStatistics method
+* fetchCharacterTalents method
+* fetchCharacterReputation method
