@@ -1,5 +1,10 @@
 = wgr-armory
 
+**Author:**
+Tim O'Donnell
+tim@timodonnell.com
+http://blog.timodonnell.com
+
 Java library for accessing the World of Warcraft Armory.
 
 
@@ -11,8 +16,3 @@ JDK 1.5
 == Road Map
 
 * consider getting rid of Digester in favor of pure JDOM parsing. may be slightly more code for some pages, but will remove dependencies on the 3 commons jars
-
-* fetchGuild method
-* fetchCharacterStatistics method
-* fetchCharacterTalents method
-* fetchCharacterReputation method
