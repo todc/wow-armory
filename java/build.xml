@@ -1,0 +1,64 @@
+<project name="WGR Armory" default="all" basedir=".">
+
+  <property name="app.name" value="wgr-armory"/>
+  <property name="version" value="1.0"/>
+
+  <property name="dist.name" value="${app.name}-${version}"/>
+
+  <property name="lib" value="${basedir}/lib"/>
+  <property name="lib.required" value="${lib}/required"/>
+  <property name="lib.optional" value="${lib}/optional"/>
+
+  <property name="src" value="${basedir}/src"/>
+  <property name="src.main" value="${src}/main"/>
+  <property name="src.test" value="${src}/test"/>
+
+  <property name="build" value="${basedir}/build"/>
+  <property name="build.main" value="${build}/main"/>
+  <property name="build.test" value="${build}/test"/>
+
+  <property name="dist" value="${basedir}/dist"/>
+
+
+  <path id="project.class.path">
+    <fileset dir="${lib.required}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+
+  <target name="clean">
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  <target name="compile">
+    <mkdir dir="${build.main}"/>
+
+    <javac destdir="${build.main}" srcdir="${src.main}" debug="true">
+      <classpath refid="project.class.path"/>
+    </javac>
+  </target>
+
+  <target name="dist">
+    <mkdir dir="${dist}"/>
+    <copy todir="${build.main}">
+      <fileset dir="${src.main}" includes="*.properties"/>
+    </copy>
+    <jar jarfile="${dist}/${dist.name}.jar" basedir="${build.main}"/>
+
+    <tar longfile="gnu" destfile="${dist}/${dist.name}.tar">
+      <tarfileset dir="${lib.required}" prefix="${dist.name}/lib/required/"/>
+      <tarfileset file="${dist}/${dist.name}.jar" prefix="${dist.name}/"/>
+      <tarfileset dir=".." fullpath="${dist.name}/README">
+        <include name="README.markdown"/>
+      </tarfileset>
+    </tar>
+    <gzip destfile="${dist}/${dist.name}.tar.gz" src="${dist}/${dist.name}.tar"/>
+
+    <delete file="${dist}/${dist.name}.tar"/>
+  </target>
+
+  <target name="all" depends="clean,compile,dist"/>
+
+</project>
