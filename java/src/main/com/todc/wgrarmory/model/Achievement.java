@@ -99,10 +99,24 @@ public class Achievement {
     public String toString() {
         StringBuffer sb = new StringBuffer("[");
         sb.append("id = " + m_id + "; ");
+        sb.append("parentId = " + m_parentId + "; ");
         sb.append("title = " + m_title + "; ");
         sb.append("description = " + m_description + "; ");
         sb.append("completed = " + m_completed + "; ");
-        sb.append("parentId = " + m_parentId);
+        sb.append("criteria = [");
+
+        for (Achievement a : m_criteria) {
+            sb.append(a + ", ");
+        }
+        sb.append("]; ");
+
+        sb.append("subAchievements = [");
+
+        for (Achievement a : m_subAchievements) {
+            sb.append(a + ", ");
+        }
+        sb.append("]");
+
         sb.append("]");
 
         return sb.toString();
