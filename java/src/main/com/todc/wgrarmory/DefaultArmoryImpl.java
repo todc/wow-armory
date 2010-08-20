@@ -14,8 +14,6 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import org.apache.commons.digester.Digester;
-
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
@@ -45,8 +43,6 @@ public class DefaultArmoryImpl extends AbstractArmory {
     // ----------------------------------------------------- Instance Variables
 
 
-    private Digester m_characterDigester = new Digester();
-
     private SimpleDateFormat m_sdfShort = new SimpleDateFormat("yyyy-MM-ddZ");
     private SimpleDateFormat m_sdfLong = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
@@ -59,8 +55,6 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
         m_sdfShort.setTimeZone(TimeZone.getTimeZone("GMT"));
         m_sdfLong.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        addCharacterRules(m_characterDigester);
     }
 
 
@@ -157,14 +151,82 @@ public class DefaultArmoryImpl extends AbstractArmory {
             throw new CharacterNotFoundException(regionCode + "-" + charName + " not found in armory (" + xml.length() + ")");
         }
 
+        Element root = toXml(xml);
+
+        Element elChar = root.getChild("characterInfo").getChild("character");
+
         PlayerCharacter character = new PlayerCharacter();
+        character.setName(elChar.getAttributeValue("name"));
+        character.setRealm(elChar.getAttributeValue("realm"));
+        character.setBattlegroup(elChar.getAttributeValue("battleGroup"));
+        character.setPlayerClass(elChar.getAttribute("classId").getIntValue());
+        character.setRace(elChar.getAttribute("raceId").getIntValue());
+        character.setGender(elChar.getAttribute("genderId").getIntValue());
+        character.setFaction(elChar.getAttribute("factionId").getIntValue());
+        character.setAchievementPoints(elChar.getAttribute("points").getIntValue());
+        character.setTitleId(elChar.getAttribute("titleId").getIntValue());
+        character.setTitle(elChar.getAttributeValue("title"));
+        character.setGuildName(elChar.getAttributeValue("guildName"));
 
-        // clear any internal member variable values before using the
-        // Digester on a new document
-        m_characterDigester.clear();
+        if (fetchCharacterTalents) {
+            Element elTalentSpecs = root.getChild("characterInfo").getChild("characterTab").getChild("talentSpecs");
+            List<Element> xmlTalentSpecs = elTalentSpecs.getChildren("talentSpec");
+            for (Element elTalentSpec : xmlTalentSpecs) {
+                TalentSpec spec = new TalentSpec();
+                spec.setName(elTalentSpec.getAttributeValue("prim"));
+                spec.setNumber(elTalentSpec.getAttribute("group").getIntValue());
+                spec.setActive(elTalentSpec.getAttributeValue("active") != null);
+                spec.setTreeOne(elTalentSpec.getAttribute("treeOne").getIntValue());
+                spec.setTreeTwo(elTalentSpec.getAttribute("treeTwo").getIntValue());
+                spec.setTreeThree(elTalentSpec.getAttribute("treeThree").getIntValue());
 
-        m_characterDigester.push(character);
-        m_characterDigester.parse(new StringReader(xml));
+                character.addTalentSpec(spec);
+            }
+        }
+
+        if (fetchCharacterItems) {
+            Element elItems = root.getChild("characterInfo").getChild("characterTab").getChild("items");
+            List<Element> xmlItems = elItems.getChildren("item");
+            for (Element elItem : xmlItems) {
+                Item item = new Item();
+                item.setSlot(elItem.getAttribute("slot").getIntValue());
+                item.setId(elItem.getAttribute("id").getIntValue());
+                item.setName(elItem.getAttributeValue("name"));
+                item.setRarity(elItem.getAttribute("name").getIntValue());
+                item.setEnchantId(elItem.getAttribute("permanentEnchantItemId").getIntValue());
+                item.setGem0Id(elItem.getAttribute("gem0Id").getIntValue());
+                item.setGem1Id(elItem.getAttribute("gem1Id").getIntValue());
+                item.setGem2Id(elItem.getAttribute("gem2Id").getIntValue());
+
+                character.addItem(item);
+            }
+        }
+
+        if (fetchCharacterProfessions) {
+            Element elProfessions = root.getChild("characterInfo").getChild("characterTab").getChild("professions");
+            List<Element> xmlSkills = elProfessions.getChildren("skill");
+            for (Element elSkill : xmlSkills) {
+                Profession prof = new Profession();
+                prof.setId(elSkill.getAttribute("id").getIntValue());
+                prof.setName(elSkill.getAttributeValue("name"));
+                prof.setMax(elSkill.getAttribute("max").getIntValue());
+                prof.setValue(elSkill.getAttribute("value").getIntValue());
+
+                character.addProfession(prof);
+            }
+
+            Element elSecProfessions = root.getChild("characterInfo").getChild("characterTab").getChild("secondaryProfessions");
+            List<Element> xmlSecSkills = elSecProfessions.getChildren("skill");
+            for (Element elSkill : xmlSecSkills) {
+                Profession prof = new Profession();
+                prof.setId(elSkill.getAttribute("id").getIntValue());
+                prof.setName(elSkill.getAttributeValue("name"));
+                prof.setMax(elSkill.getAttribute("max").getIntValue());
+                prof.setValue(elSkill.getAttribute("value").getIntValue());
+
+                character.addProfession(prof);
+            }
+        }
 
         return character;
     }
@@ -454,45 +516,6 @@ public class DefaultArmoryImpl extends AbstractArmory {
             // recursively parse sub-factions
             List<Element> xmlSubFactions = elFaction.getChildren("faction");
             parseReputations(xmlSubFactions, factions);
-        }
-    }
-
-
-    private void addCharacterRules(Digester d) {
-        d.addSetProperties(
-            "page/characterInfo/character",
-            new String[] {"classId", "factionId", "genderId", "raceId", "suffix", "points", "battleGroup"},
-            new String[] {"playerClass", "faction", "gender", "race", "title", "achievementPoints", "battlegroup"}
-        );
-
-        if (fetchCharacterTalents) {
-            d.addObjectCreate("page/characterInfo/characterTab/talentSpecs/talentSpec", TalentSpec.class);
-            d.addSetNext("page/characterInfo/characterTab/talentSpecs/talentSpec", "addTalentSpec");
-            d.addSetProperties(
-                "page/characterInfo/characterTab/talentSpecs/talentSpec",
-                new String[] {"prim", "group"},
-                new String[] {"name", "number"}
-            );
-        }
-
-        if (fetchCharacterProfessions) {
-            d.addObjectCreate("page/characterInfo/characterTab/professions/skill", Profession.class);
-            d.addSetNext("page/characterInfo/characterTab/professions/skill", "addProfession");
-            d.addSetProperties("page/characterInfo/characterTab/professions/skill");
-
-            d.addObjectCreate("page/characterInfo/characterTab/secondaryProfessions/skill", Profession.class);
-            d.addSetNext("page/characterInfo/characterTab/secondaryProfessions/skill", "addSecondaryProfession");
-            d.addSetProperties("page/characterInfo/characterTab/secondaryProfessions/skill");
-        }
-
-        if (fetchCharacterItems) {
-            d.addObjectCreate("page/characterInfo/characterTab/items/item", Item.class);
-            d.addSetNext("page/characterInfo/characterTab/items/item", "addItem");
-            d.addSetProperties(
-                "page/characterInfo/characterTab/items/item",
-                "permanentEnchantItemId",
-                "enchantId"
-            );
         }
     }
 
