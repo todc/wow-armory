@@ -11,6 +11,7 @@ package com.todc.wgrarmory;
 
 import java.net.Proxy;
 import java.util.List;
+import java.util.Map;
 
 import com.todc.wgrarmory.model.*;
 
@@ -56,6 +57,12 @@ public interface Armory {
             throws Exception;
 
     public List<TalentSpec> fetchCharacterTalents(String charName, String realmName, String regionCode)
+            throws Exception;
+
+    public Map<String,List<Statistic>> fetchCharacterStatistics(String charName, String realmName, String regionCode, int category)
+            throws Exception;
+
+    public Map<String,List<Statistic>> fetchCharacterStatistics(String charName, String realmName, String regionCode, int category, String[] subCategories)
             throws Exception;
 
 }

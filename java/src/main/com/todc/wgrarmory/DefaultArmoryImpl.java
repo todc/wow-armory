@@ -14,6 +14,7 @@ import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import com.sun.deploy.util.OrderedHashSet;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
@@ -76,6 +77,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
      *
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public Guild fetchGuild(String guildName, String realmName, String regionCode) throws Exception {
         String armoryHost = getArmoryHost(regionCode);
         String rn = URLEncoder.encode(realmName, UTF8);
@@ -136,6 +138,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
      *
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public PlayerCharacter fetchCharacter(String charName, String realmName, String regionCode)
             throws Exception
     {
@@ -270,6 +273,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
      *
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category, int[] subCategories)
             throws Exception
     {
@@ -338,6 +342,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
      *
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public List<Faction> fetchCharacterReputation(String charName, String realmName, String regionCode) throws Exception {
         String armoryHost = getArmoryHost(regionCode);
         String rn = URLEncoder.encode(realmName, UTF8);
@@ -373,6 +378,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
      *
      * @throws Exception
      */
+    @SuppressWarnings("unchecked")
     public List<TalentSpec> fetchCharacterTalents(String charName, String realmName, String regionCode) throws Exception {
         String armoryHost = getArmoryHost(regionCode);
         String rn = URLEncoder.encode(realmName, UTF8);
@@ -431,9 +437,124 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch all character statistics for the specified category. Performs HTTP
+     * request for character-statistics.xml.
+     *
+     * @param charName Character name
+     * @param realmName Realm name
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param category ID of category to fetch
+     *
+     * @return Map where each entry consists of the category name (key) and a
+     *         list of corresponding statistic objects (value).
+     *
+     * @throws Exception
+     */
+    public Map<String,List<Statistic>> fetchCharacterStatistics(String charName, String realmName, String regionCode, int category) throws Exception {
+        return fetchCharacterStatistics(charName, realmName, regionCode, category, null);
+    }
+
+
+    /**
+     * Fetch character statistics for the specified category and sub-categories.
+     * Performs HTTP request for character-statistics.xml.
+     *
+     * @param charName Character name
+     * @param realmName Realm name
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param category ID of category to fetch
+     * @param subCategories Array of sub-category names to fetch. All others
+     *        will be ignored. 
+     *
+     * @return Map where each entry consists of the category name (key) and a
+     *         list of corresponding statistic objects (value).
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String,List<Statistic>> fetchCharacterStatistics(String charName, String realmName, String regionCode, int category, String[] subCategories) throws Exception {
+        String armoryHost = getArmoryHost(regionCode);
+        String rn = URLEncoder.encode(realmName, UTF8);
+        String cn = URLEncoder.encode(charName, UTF8);
+
+        String url = "http://" + armoryHost + "/character-statistics.xml?r=" + rn + "&cn=" + cn + "&c=" + category + "&rhtml=n";
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+
+        List<Element> xmlTopLevelStats = root.getChildren("statistic");
+        String topLevelName = root.getAttributeValue("name");
+
+        Map<String,List<Statistic>> categories = new LinkedHashMap<String,List<Statistic>>();
+
+        // top-level category stats
+        if (shouldFetch(topLevelName, subCategories)) {
+            List<Statistic> topLevelStats = new ArrayList<Statistic>();
+
+            for (Element elStat : xmlTopLevelStats) {
+                Statistic stat = new Statistic();
+
+                if (elStat.getAttribute("id") != null) {
+                    stat.setId(elStat.getAttribute("id").getIntValue());
+                }
+                stat.setName(elStat.getAttributeValue("name"));
+
+                String qty = elStat.getAttributeValue("quantity");
+                if (qty != null && !qty.equals("--")) {
+                    stat.setQuantity(Integer.parseInt(qty));
+                }
+
+                stat.setHighest(elStat.getAttributeValue("highest"));
+
+                topLevelStats.add(stat);
+            }
+
+            categories.put(topLevelName, topLevelStats);
+        }
+
+        // all other sub-category stats
+        List<Element> xmlCategories = root.getChildren("category");
+        for (Element elCategory : xmlCategories) {
+            String categoryName = elCategory.getAttributeValue("name");
+
+            if (shouldFetch(categoryName, subCategories)) {
+                List<Element> xmlStats = elCategory.getChildren("statistic");
+
+                List<Statistic> stats = new ArrayList<Statistic>();
+
+                for (Element elStat : xmlStats) {
+                    Statistic stat = new Statistic();
+
+                    if (elStat.getAttribute("id") != null) {
+                        stat.setId(elStat.getAttribute("id").getIntValue());
+                    }
+                    stat.setName(elStat.getAttributeValue("name"));
+
+                    String qty = elStat.getAttributeValue("quantity");
+                    if (qty != null && !qty.equals("--")) {
+                        stat.setQuantity(Integer.parseInt(qty));
+                    }
+
+                    stat.setHighest(elStat.getAttributeValue("highest"));
+
+                    stats.add(stat);
+                }
+
+                categories.put(categoryName, stats);
+            }
+        }
+
+
+        return categories;
+    }
+
+
     // -------------------------------------------------------- Private Methods
 
 
+    @SuppressWarnings("unchecked")
     private void parseAchievements(List<Element> xmlAchievs, List<Achievement> charAchievements) throws Exception {
         for (Element element : xmlAchievs) {
             Achievement achievement = new Achievement();
@@ -500,6 +621,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    @SuppressWarnings("unchecked")
     private void parseReputations(List<Element> xmlFactions, List<Faction> factions) throws Exception {
         for (Element elFaction : xmlFactions) {
             boolean isHeader = elFaction.getAttributeValue("header") != null;
@@ -526,6 +648,21 @@ public class DefaultArmoryImpl extends AbstractArmory {
         } else {
             for (int item : haystack) {
                 if (item == needle) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    private boolean shouldFetch(String needle, String[] haystack) {
+        if (haystack == null) {
+            return true;
+        } else {
+            for (String item : haystack) {
+                if (item.equals(needle)) {
                     return true;
                 }
             }
@@ -648,18 +785,22 @@ public class DefaultArmoryImpl extends AbstractArmory {
         }
         */
 
-        // Test talents
+        // Test stat
         int count = 1;
         for (int i=0; i<count; i++) {
             for (String name : names) {
                 long s1 = System.currentTimeMillis();
 
-                List<TalentSpec> talents = armory.fetchCharacterTalents(name, "Dawnbringer", "US");
+                Map<String,List<Statistic>> categories = armory.fetchCharacterStatistics(name, "Dawnbringer", "US", 14807,
+                        new String[] {"Fall of the Lich King", "Call of the Crusade"});
 
                 long e1 = System.currentTimeMillis();
 
-                for (TalentSpec ts : talents) {
-                    System.out.println(name + " - " + ts);
+                for (Map.Entry<String,List<Statistic>> entry : categories.entrySet()) {
+                    System.out.println(entry.getKey() + ":");
+                    for (Statistic stat : entry.getValue()) {
+                        System.out.println("   " + stat);
+                    }
                 }
             }
 

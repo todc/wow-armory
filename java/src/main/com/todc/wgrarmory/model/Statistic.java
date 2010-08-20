@@ -1,0 +1,76 @@
+/*
+ * $Id$
+ *
+ * Copyright (c)2010, Tim O'Donnell. All Rights Reserved.
+ *
+ * This code may not be used or reproduced in part or in whole without
+ * express written permission of Tim O'Donnell.
+ */
+package com.todc.wgrarmory.model;
+
+
+/**
+ * @author Tim O'Donnell
+ */
+public class Statistic {
+
+    // ----------------------------------------------------- Instance Variables
+
+
+    private int m_id = 0;
+    private String m_name;
+    private int m_quantity = 0;
+    private String m_highest;
+
+
+    // ------------------------------------------------------ Getters / Setters
+
+
+    public int getId() {
+        return m_id;
+    }
+
+    public void setId(int id) {
+        m_id = id;
+    }
+
+    public String getName() {
+        return m_name;
+    }
+
+    public void setName(String name) {
+        m_name = name;
+    }
+
+    public int getQuantity() {
+        return m_quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        m_quantity = quantity;
+    }
+
+    public String getHighest() {
+        return m_highest;
+    }
+
+    public void setHighest(String highest) {
+        m_highest = highest;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("[");
+        sb.append("id = " + m_id + "; ");
+        sb.append("name = " + m_name + "; ");
+        sb.append("quantity = " + m_quantity + "; ");
+        sb.append("highest = " + m_highest);
+        sb.append("]");
+
+        return sb.toString();
+    }
+
+}
