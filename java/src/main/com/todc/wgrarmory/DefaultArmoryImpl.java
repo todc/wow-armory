@@ -135,7 +135,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
             topCategory.setName(AchievementCategory.DUNGEONS_AND_RAIDS);
             allCategories.add(topCategory);
 
-            parseAchievements(elTopLevelCategory.getChildren("achievement"), topCategory.getAchievements(), subCategories);
+            parseAchievements(elTopLevelCategory.getChildren("achievement"), topCategory.getAchievements());
         }
 
         //
@@ -151,7 +151,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
                 ac.setName(AchievementCategory.NAMES[id]);
 
                 List<Element> xmlAchievements = categories.get(id).getChildren("achievement");
-                parseAchievements(xmlAchievements, ac.getAchievements(), subCategories);
+                parseAchievements(xmlAchievements, ac.getAchievements());
 
                 allCategories.add(ac);
             }
@@ -179,7 +179,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
-    private void parseAchievements(List<Element> xmlAchievs, List<Achievement> charAchievements, int[] fetchOptions) throws Exception {
+    private void parseAchievements(List<Element> xmlAchievs, List<Achievement> charAchievements) throws Exception {
         for (Element element : xmlAchievs) {
             Achievement achievement = new Achievement();
 
@@ -238,7 +238,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
             if (fetchSubAchievements) {
                 List<Element> subAchievs = element.getChildren("achievement", element.getNamespace());
                 if (subAchievs != null) {
-                    parseAchievements(subAchievs, achievement.getSubAchievements(), fetchOptions);
+                    parseAchievements(subAchievs, achievement.getSubAchievements());
                 }
             }
         }
