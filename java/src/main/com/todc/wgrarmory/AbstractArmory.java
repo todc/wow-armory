@@ -16,9 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
-import java.util.TimeZone;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,9 +38,13 @@ public abstract class AbstractArmory implements Armory {
 
     protected Properties config = null;
     protected boolean fetchAchievementTitle = true;
-    protected boolean fetchAchievementDescriptions = true;
+    protected boolean fetchAchievementDescription = true;
     protected boolean fetchAchievementCriteria = true;
     protected boolean fetchSubAchievements = true;
+
+    protected boolean fetchCharacterTalents = true;
+    protected boolean fetchCharacterProfessions = true;
+    protected boolean fetchCharacterItems = true;
 
     private Proxy m_proxy;
 
@@ -81,11 +83,11 @@ public abstract class AbstractArmory implements Armory {
     }
 
     public boolean isFetchAchievementDescription() {
-        return fetchAchievementDescriptions;
+        return fetchAchievementDescription;
     }
 
     public void setFetchAchievementDescription(boolean fetchAchievementDescriptions) {
-        this.fetchAchievementDescriptions = fetchAchievementDescriptions;
+        this.fetchAchievementDescription = fetchAchievementDescriptions;
     }
 
     public boolean isFetchAchievementCriteria() {
@@ -104,7 +106,31 @@ public abstract class AbstractArmory implements Armory {
         this.fetchSubAchievements = fetchSubAchievements;
     }
 
+    public boolean isFetchCharacterTalents() {
+        return fetchCharacterTalents;
+    }
 
+    public void setFetchCharacterTalents(boolean fetchCharacterTalents) {
+        this.fetchCharacterTalents = fetchCharacterTalents;
+    }
+
+    public boolean isFetchCharacterProfessions() {
+        return fetchCharacterProfessions;
+    }
+
+    public void setFetchCharacterProfessions(boolean fetchCharacterProfessions) {
+        this.fetchCharacterProfessions = fetchCharacterProfessions;
+    }
+
+    public boolean isFetchCharacterItems() {
+        return fetchCharacterItems;
+    }
+
+    public void setFetchCharacterItems(boolean fetchCharacterItems) {
+        this.fetchCharacterItems = fetchCharacterItems;
+    }
+
+    
     // ------------------------------------------------------ Protected Methods
 
 

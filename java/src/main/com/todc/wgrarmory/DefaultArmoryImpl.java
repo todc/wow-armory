@@ -191,7 +191,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
             }
 
             // should we fetch the description?
-            if (fetchAchievementDescriptions) {
+            if (fetchAchievementDescription) {
                 achievement.setDescription(element.getAttributeValue("desc"));
             }
 
@@ -218,7 +218,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
                                 achievCrit.setTitle(critElement.getAttributeValue("name"));
                             }
 
-                            if (fetchAchievementDescriptions) {
+                            if (fetchAchievementDescription) {
                                 achievCrit.setParentId(achievement.getId());
                             }
 
@@ -252,29 +252,35 @@ public class DefaultArmoryImpl extends AbstractArmory {
             new String[] {"playerClass", "faction", "gender", "race", "title", "achievementPoints", "battlegroup"}
         );
 
-        d.addObjectCreate("page/characterInfo/characterTab/talentSpecs/talentSpec", TalentSpec.class);
-        d.addSetNext("page/characterInfo/characterTab/talentSpecs/talentSpec", "addTalentSpec");
-        d.addSetProperties(
-            "page/characterInfo/characterTab/talentSpecs/talentSpec",
-            new String[] {"prim", "group"},
-            new String[] {"name", "number"}
-        );
+        if (fetchCharacterTalents) {
+            d.addObjectCreate("page/characterInfo/characterTab/talentSpecs/talentSpec", TalentSpec.class);
+            d.addSetNext("page/characterInfo/characterTab/talentSpecs/talentSpec", "addTalentSpec");
+            d.addSetProperties(
+                "page/characterInfo/characterTab/talentSpecs/talentSpec",
+                new String[] {"prim", "group"},
+                new String[] {"name", "number"}
+            );
+        }
 
-        d.addObjectCreate("page/characterInfo/characterTab/professions/skill", Profession.class);
-        d.addSetNext("page/characterInfo/characterTab/professions/skill", "addProfession");
-        d.addSetProperties("page/characterInfo/characterTab/professions/skill");
+        if (fetchCharacterProfessions) {
+            d.addObjectCreate("page/characterInfo/characterTab/professions/skill", Profession.class);
+            d.addSetNext("page/characterInfo/characterTab/professions/skill", "addProfession");
+            d.addSetProperties("page/characterInfo/characterTab/professions/skill");
 
-        d.addObjectCreate("page/characterInfo/characterTab/secondaryProfessions/skill", Profession.class);
-        d.addSetNext("page/characterInfo/characterTab/secondaryProfessions/skill", "addSecondaryProfession");
-        d.addSetProperties("page/characterInfo/characterTab/secondaryProfessions/skill");
+            d.addObjectCreate("page/characterInfo/characterTab/secondaryProfessions/skill", Profession.class);
+            d.addSetNext("page/characterInfo/characterTab/secondaryProfessions/skill", "addSecondaryProfession");
+            d.addSetProperties("page/characterInfo/characterTab/secondaryProfessions/skill");
+        }
 
-        d.addObjectCreate("page/characterInfo/characterTab/items/item", Item.class);
-        d.addSetNext("page/characterInfo/characterTab/items/item", "addItem");
-        d.addSetProperties(
-            "page/characterInfo/characterTab/items/item",
-            "permanentEnchantItemId",
-            "enchantId"
-        );
+        if (fetchCharacterItems) {
+            d.addObjectCreate("page/characterInfo/characterTab/items/item", Item.class);
+            d.addSetNext("page/characterInfo/characterTab/items/item", "addItem");
+            d.addSetProperties(
+                "page/characterInfo/characterTab/items/item",
+                "permanentEnchantItemId",
+                "enchantId"
+            );
+        }
     }
 
 

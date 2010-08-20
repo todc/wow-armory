@@ -34,6 +34,13 @@ public interface Armory {
     public boolean isFetchSubAchievements();
     public void setFetchSubAchievements(boolean val);
 
+    public boolean isFetchCharacterTalents();
+    public void setFetchCharacterTalents(boolean val);
+    public boolean isFetchCharacterProfessions();
+    public void setFetchCharacterProfessions(boolean val);
+    public boolean isFetchCharacterItems();
+    public void setFetchCharacterItems(boolean val);
+
 
     public PlayerCharacter fetchCharacter(String charName, String realmName, String regionCode)
             throws Exception;
