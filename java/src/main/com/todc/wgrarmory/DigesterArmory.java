@@ -105,7 +105,7 @@ public class DigesterArmory extends AbstractArmory {
         String rn = URLEncoder.encode(realmName, UTF8);
         String cn = URLEncoder.encode(charName, UTF8);
 
-        String url = "http://" + armoryHost + "/character-achievements.xml?r=" + rn + "&cn=" + cn + "&rhtml=n";
+        String url = "http://" + armoryHost + "/character-achievements.xml?r=" + rn + "&cn=" + cn + "&c=" + category + "&rhtml=n";
 
         String responseBody = this.httpGet(url);
 
@@ -118,6 +118,7 @@ public class DigesterArmory extends AbstractArmory {
         List<AchievementCategory> allCategories = new ArrayList<AchievementCategory>();
 
         AchievementCategory topCategory = new AchievementCategory();
+        allCategories.add(topCategory);
 
         //
         // Parse the top-level achievements, e.g. Glory of the Raider
@@ -132,15 +133,19 @@ public class DigesterArmory extends AbstractArmory {
         List<Element> categories = elTopLevelCategory.getChildren("category");
 
         // ToC 10
+        AchievementCategory toc10Category = new AchievementCategory();
         List<Element> xmlTOC10Achievs = categories.get(8).getChildren("achievement"); // fourth to last category
-        parseAchievements(xmlTOC10Achievs, topCategory.getAchievements());
+        parseAchievements(xmlTOC10Achievs, toc10Category.getAchievements());
+        allCategories.add(toc10Category);
 
         // ToC 25
         //List<Element> xmlTOC25Achievs = categories.get(9).getChildren("achievement"); // third to last category
 
         // ICC 10
+        AchievementCategory icc10Category = new AchievementCategory();
         List<Element> xmlICC10Achievs = categories.get(10).getChildren("achievement"); // second to last category
-        parseAchievements(xmlICC10Achievs, topCategory.getAchievements());
+        parseAchievements(xmlICC10Achievs, icc10Category.getAchievements());
+        allCategories.add(icc10Category);
 
         // ICC 25
         //List<Element> xmlICC25Achievs = categories.get(11).getChildren("achievement"); // last category
@@ -156,16 +161,13 @@ public class DigesterArmory extends AbstractArmory {
         for (Element element : xmlAchievs) {
             Achievement achievement = new Achievement();
 
-            int id = Integer.parseInt(element.getAttributeValue("id"));
-            String title = element.getAttributeValue("title");
-
-            achievement.setId(id);
-            achievement.setTitle(title);
+            achievement.setId(element.getAttribute("id").getIntValue());
+            achievement.setTitle(element.getAttributeValue("title"));
+            achievement.setDescription(element.getAttributeValue("desc"));
 
             if (element.getAttribute("dateCompleted") != null) {
+                // e.g. 2009-12-13T02:47:00-06:00
                 String rawCompleted = element.getAttributeValue("dateCompleted");
-
-                //2009-12-13T02:47:00-06:00
                 rawCompleted = rawCompleted.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
                 Date completed = m_sdfLong.parse(rawCompleted);
                 achievement.setCompleted(completed);
@@ -176,26 +178,26 @@ public class DigesterArmory extends AbstractArmory {
 
                 for (Element critElement : criteria) {
                     if (critElement.getAttribute("date") != null) {
-                        Integer critId = Integer.parseInt(critElement.getAttributeValue("id"));
-                        String rawCompleted = critElement.getAttributeValue("date");
-                        String name = critElement.getAttributeValue("name");
-
                         Achievement achievCrit = new Achievement();
-                        achievCrit.setId(critId);
 
-                        //2009-12-13-06:00
+                        achievCrit.setId(critElement.getAttribute("id").getIntValue());
+                        achievCrit.setTitle(critElement.getAttributeValue("name"));
+                        achievCrit.setParentId(achievement.getId());
+
+                        // e.g. 2009-12-13-06:00
+                        String rawCompleted = critElement.getAttributeValue("date");
                         rawCompleted = rawCompleted.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
                         Date completed = m_sdfShort.parse(rawCompleted);
                         achievCrit.setCompleted(completed);
 
-                        charAchievements.add(achievCrit);
+                        achievement.getCriteria().add(achievCrit);
                     }
                 }
             }
 
             List<Element> subAchievs = element.getChildren("achievement", element.getNamespace());
             if (subAchievs != null) {
-                parseAchievements(subAchievs, charAchievements);
+                parseAchievements(subAchievs, achievement.getSubAchievements());
             }
         }
     }
@@ -275,7 +277,8 @@ public class DigesterArmory extends AbstractArmory {
         
         Armory armory = new DigesterArmory();
 
-        String[] names = new String[] {"Gogan123", "Kuramori", "Aozaru", "Haibane", "Asano", "Ikuya", "Orlandin", "Zol", "Zorthy", "Torchholder"};
+        //String[] names = new String[] {"Gogan", "Kuramori", "Aozaru", "Haibane", "Asano", "Ikuya", "Orlandin", "Zol", "Zorthy", "Torchholder"};
+        String[] names = new String[] {"Gogan"};
 
         int count = 3;
         for (int i=0; i<count; i++) {
@@ -283,10 +286,18 @@ public class DigesterArmory extends AbstractArmory {
                 long s1 = System.currentTimeMillis();
 
                 PlayerCharacter c = armory.fetchCharacter(name, "Dawnbringer", "US");
+                List<AchievementCategory> achievCats = armory.fetchCharacterAchievements(name, "Dawnbringer", "US", 168);
 
                 long e1 = System.currentTimeMillis();
 
                 System.out.println((e1-s1) + "ms - " + c);
+
+                for (AchievementCategory cat : achievCats) {
+                    List<Achievement> achievs = cat.getAchievements();
+                    for (Achievement a : achievs) {
+                        System.out.println(a);
+                    }
+                }
             }
 
             Thread.sleep(3);
