@@ -18,7 +18,6 @@ import com.todc.wgrarmory.model.*;
 import org.apache.commons.digester.Digester;
 
 import org.jdom.Element;
-import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +100,13 @@ public class DigesterArmory extends AbstractArmory {
     public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category)
             throws Exception
     {
+        return fetchCharacterAchievements(charName, realmName, regionCode, category, null);
+    }
+
+
+    public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category, int[] subCategories)
+            throws Exception
+    {
         String armoryHost = getArmoryHost(regionCode);
         String rn = URLEncoder.encode(realmName, UTF8);
         String cn = URLEncoder.encode(charName, UTF8);
@@ -117,14 +123,19 @@ public class DigesterArmory extends AbstractArmory {
 
         List<AchievementCategory> allCategories = new ArrayList<AchievementCategory>();
 
-        AchievementCategory topCategory = new AchievementCategory();
-        allCategories.add(topCategory);
+        Element elTopLevelCategory = root.getChild("category");
 
         //
         // Parse the top-level achievements, e.g. Glory of the Raider
         //
-        Element elTopLevelCategory = root.getChild("category");
-        parseAchievements(elTopLevelCategory.getChildren("achievement"), topCategory.getAchievements());
+        if (shouldFetch(AchievementCategory.ID_DUNGEONS_AND_RAIDS, subCategories)) {
+            AchievementCategory topCategory = new AchievementCategory();
+            topCategory.setId(AchievementCategory.ID_DUNGEONS_AND_RAIDS);
+            topCategory.setName(AchievementCategory.DUNGEONS_AND_RAIDS);
+            allCategories.add(topCategory);
+
+            parseAchievements(elTopLevelCategory.getChildren("achievement"), topCategory.getAchievements(), subCategories);
+        }
 
         //
         // Sadly, there's no identifier to deliniate which instance is which in the xml.
@@ -132,23 +143,18 @@ public class DigesterArmory extends AbstractArmory {
         //
         List<Element> categories = elTopLevelCategory.getChildren("category");
 
-        // ToC 10
-        AchievementCategory toc10Category = new AchievementCategory();
-        List<Element> xmlTOC10Achievs = categories.get(8).getChildren("achievement"); // fourth to last category
-        parseAchievements(xmlTOC10Achievs, toc10Category.getAchievements());
-        allCategories.add(toc10Category);
+        for (int id=0; id<categories.size(); id++) {
+            if (shouldFetch(id, subCategories)) {
+                AchievementCategory ac = new AchievementCategory();
+                ac.setId(id);
+                ac.setName(AchievementCategory.NAMES[id]);
 
-        // ToC 25
-        //List<Element> xmlTOC25Achievs = categories.get(9).getChildren("achievement"); // third to last category
+                List<Element> xmlAchievements = categories.get(id).getChildren("achievement");
+                parseAchievements(xmlAchievements, ac.getAchievements(), subCategories);
 
-        // ICC 10
-        AchievementCategory icc10Category = new AchievementCategory();
-        List<Element> xmlICC10Achievs = categories.get(10).getChildren("achievement"); // second to last category
-        parseAchievements(xmlICC10Achievs, icc10Category.getAchievements());
-        allCategories.add(icc10Category);
-
-        // ICC 25
-        //List<Element> xmlICC25Achievs = categories.get(11).getChildren("achievement"); // last category
+                allCategories.add(ac);
+            }
+        }
 
         return allCategories;
     }
@@ -157,13 +163,36 @@ public class DigesterArmory extends AbstractArmory {
     // -------------------------------------------------------- Private Methods
 
 
-    private void parseAchievements(List<Element> xmlAchievs, List<Achievement> charAchievements) throws Exception {
+    private boolean shouldFetch(int needle, int[] haystack) {
+        if (haystack == null) {
+            return true;
+        } else {
+            for (int item : haystack) {
+                if (item == needle) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
+    private void parseAchievements(List<Element> xmlAchievs, List<Achievement> charAchievements, int[] fetchOptions) throws Exception {
         for (Element element : xmlAchievs) {
             Achievement achievement = new Achievement();
 
             achievement.setId(element.getAttribute("id").getIntValue());
-            achievement.setTitle(element.getAttributeValue("title"));
-            achievement.setDescription(element.getAttributeValue("desc"));
+
+            // should we fetch the title?
+            if (fetchAchievementTitle) {
+                achievement.setTitle(element.getAttributeValue("title"));
+            }
+
+            // should we fetch the description?
+            if (fetchAchievementDescriptions) {
+                achievement.setDescription(element.getAttributeValue("desc"));
+            }
 
             if (element.getAttribute("dateCompleted") != null) {
                 // e.g. 2009-12-13T02:47:00-06:00
@@ -174,30 +203,42 @@ public class DigesterArmory extends AbstractArmory {
 
                 charAchievements.add(achievement);
             } else {
-                List<Element> criteria = element.getChildren("criteria", element.getNamespace());
+                // should we fetch the criteria?
+                if (fetchAchievementCriteria) {
+                    List<Element> criteria = element.getChildren("criteria", element.getNamespace());
 
-                for (Element critElement : criteria) {
-                    if (critElement.getAttribute("date") != null) {
-                        Achievement achievCrit = new Achievement();
+                    for (Element critElement : criteria) {
+                        if (critElement.getAttribute("date") != null) {
+                            Achievement achievCrit = new Achievement();
 
-                        achievCrit.setId(critElement.getAttribute("id").getIntValue());
-                        achievCrit.setTitle(critElement.getAttributeValue("name"));
-                        achievCrit.setParentId(achievement.getId());
+                            achievCrit.setId(critElement.getAttribute("id").getIntValue());
 
-                        // e.g. 2009-12-13-06:00
-                        String rawCompleted = critElement.getAttributeValue("date");
-                        rawCompleted = rawCompleted.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
-                        Date completed = m_sdfShort.parse(rawCompleted);
-                        achievCrit.setCompleted(completed);
+                            if (fetchAchievementTitle) {
+                                achievCrit.setTitle(critElement.getAttributeValue("name"));
+                            }
 
-                        achievement.getCriteria().add(achievCrit);
+                            if (fetchAchievementDescriptions) {
+                                achievCrit.setParentId(achievement.getId());
+                            }
+
+                            // e.g. 2009-12-13-06:00
+                            String rawCompleted = critElement.getAttributeValue("date");
+                            rawCompleted = rawCompleted.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
+                            Date completed = m_sdfShort.parse(rawCompleted);
+                            achievCrit.setCompleted(completed);
+
+                            achievement.getCriteria().add(achievCrit);
+                        }
                     }
                 }
             }
 
-            List<Element> subAchievs = element.getChildren("achievement", element.getNamespace());
-            if (subAchievs != null) {
-                parseAchievements(subAchievs, achievement.getSubAchievements());
+            // should we fetch the sub-achievements?
+            if (fetchSubAchievements) {
+                List<Element> subAchievs = element.getChildren("achievement", element.getNamespace());
+                if (subAchievs != null) {
+                    parseAchievements(subAchievs, achievement.getSubAchievements(), fetchOptions);
+                }
             }
         }
     }
@@ -276,9 +317,13 @@ public class DigesterArmory extends AbstractArmory {
         long start = System.currentTimeMillis();
         
         Armory armory = new DigesterArmory();
+        armory.setFetchAchievementTitle(true);
+        armory.setFetchAchievementDescription(false);
+        armory.setFetchAchievementCriteria(false);
+        armory.setFetchSubAchievements(false);
 
-        //String[] names = new String[] {"Gogan", "Kuramori", "Aozaru", "Haibane", "Asano", "Ikuya", "Orlandin", "Zol", "Zorthy", "Torchholder"};
-        String[] names = new String[] {"Gogan"};
+        String[] names = new String[] {"Gogan", "Kuramori", "Aozaru", "Haibane", "Asano", "Ikuya", "Orlandin", "Zol", "Zorthy", "Torchholder"};
+        //String[] names = new String[] {"Gogan"};
 
         int count = 3;
         for (int i=0; i<count; i++) {
@@ -286,17 +331,17 @@ public class DigesterArmory extends AbstractArmory {
                 long s1 = System.currentTimeMillis();
 
                 PlayerCharacter c = armory.fetchCharacter(name, "Dawnbringer", "US");
-                List<AchievementCategory> achievCats = armory.fetchCharacterAchievements(name, "Dawnbringer", "US", 168);
+                List<AchievementCategory> achievCats = armory.fetchCharacterAchievements(name, "Dawnbringer", "US",
+                    AchievementCategory.ID_DUNGEONS_AND_RAIDS,
+                    new int[] {AchievementCategory.ID_FALL_OF_THE_LICH_KING_10}
+                );
 
                 long e1 = System.currentTimeMillis();
 
                 System.out.println((e1-s1) + "ms - " + c);
 
                 for (AchievementCategory cat : achievCats) {
-                    List<Achievement> achievs = cat.getAchievements();
-                    for (Achievement a : achievs) {
-                        System.out.println(a);
-                    }
+                    System.out.println(cat);
                 }
             }
 
