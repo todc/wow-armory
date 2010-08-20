@@ -12,10 +12,7 @@ package com.todc.wgrarmory;
 import java.net.Proxy;
 import java.util.List;
 
-import com.todc.wgrarmory.model.Achievement;
-import com.todc.wgrarmory.model.AchievementCategory;
-import com.todc.wgrarmory.model.Guild;
-import com.todc.wgrarmory.model.PlayerCharacter;
+import com.todc.wgrarmory.model.*;
 
 
 /**
@@ -53,6 +50,9 @@ public interface Armory {
             throws Exception;
 
     public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category, int[] subCategories)
+            throws Exception;
+
+    public List<Faction> fetchCharacterReputation(String charName, String realmName, String regionCode)
             throws Exception;
 
 }

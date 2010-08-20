@@ -218,22 +218,30 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
-    // -------------------------------------------------------- Private Methods
+    public List<Faction> fetchCharacterReputation(String charName, String realmName, String regionCode) throws Exception {
+        String armoryHost = getArmoryHost(regionCode);
+        String rn = URLEncoder.encode(realmName, UTF8);
+        String cn = URLEncoder.encode(charName, UTF8);
 
+        String url = "http://" + armoryHost + "/character-reputation.xml?r=" + rn + "&cn=" + cn + "&rhtml=n";
 
-    private boolean shouldFetch(int needle, int[] haystack) {
-        if (haystack == null) {
-            return true;
-        } else {
-            for (int item : haystack) {
-                if (item == needle) {
-                    return true;
-                }
-            }
-        }
+        String responseBody = this.httpGet(url);
 
-        return false;
+        Element root = toXml(responseBody);
+
+        List<Element> elFactions = root.getChild("characterInfo")
+                                       .getChild("reputationTab")
+                                       .getChildren("faction");
+
+        List<Faction> factions = new ArrayList<Faction>();
+
+        parseReputations(elFactions, factions);
+
+        return factions;
     }
+
+
+    // -------------------------------------------------------- Private Methods
 
 
     private void parseAchievements(List<Element> xmlAchievs, List<Achievement> charAchievements) throws Exception {
@@ -302,6 +310,26 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    private void parseReputations(List<Element> xmlFactions, List<Faction> factions) throws Exception {
+        for (Element elFaction : xmlFactions) {
+            boolean isHeader = elFaction.getAttributeValue("header") != null;
+
+            if (!isHeader) {
+                Faction faction = new Faction();
+                faction.setId(elFaction.getAttribute("id").getIntValue());
+                faction.setName(elFaction.getAttributeValue("name"));
+                faction.setReputation(elFaction.getAttribute("reputation").getIntValue());
+
+                factions.add(faction);
+            }
+
+            // recursively parse sub-factions
+            List<Element> xmlSubFactions = elFaction.getChildren("faction");
+            parseReputations(xmlSubFactions, factions);
+        }
+    }
+
+
     private void addCharacterRules(Digester d) {
         d.addSetProperties(
             "page/characterInfo/character",
@@ -338,6 +366,21 @@ public class DefaultArmoryImpl extends AbstractArmory {
                 "enchantId"
             );
         }
+    }
+
+
+    private boolean shouldFetch(int needle, int[] haystack) {
+        if (haystack == null) {
+            return true;
+        } else {
+            for (int item : haystack) {
+                if (item == needle) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 
@@ -386,9 +429,12 @@ public class DefaultArmoryImpl extends AbstractArmory {
         armory.setFetchAchievementCriteria(false);
         armory.setFetchSubAchievements(false);
 
-        /*
-        String[] names = new String[] {"Gogan", "Kuramori", "Aozaru", "Haibane", "Asano", "Ikuya", "Orlandin", "Zol", "Zorthy", "Torchholder"};
+        //String[] names = new String[] {"Gogan", "Kuramori", "Aozaru", "Haibane", "Asano", "Ikuya", "Orlandin", "Zol", "Zorthy", "Torchholder"};
+        String[] names = new String[] {"Gogan"};
+        String[] guilds = new String[] { "Gentlemen of Leisure" };
 
+        /*
+        // Test character and achievements
         int count = 3;
         for (int i=0; i<count; i++) {
             for (String name : names) {
@@ -413,11 +459,11 @@ public class DefaultArmoryImpl extends AbstractArmory {
         }
         */
 
-        String[] names = new String[] { "Gentlemen of Leisure" };
-
+        /*
+        // Test guild
         int count = 1;
         for (int i=0; i<count; i++) {
-            for (String name : names) {
+            for (String name : guilds) {
                 long s1 = System.currentTimeMillis();
 
                 Guild g = armory.fetchGuild(name, "Dawnbringer", "US");
@@ -425,6 +471,25 @@ public class DefaultArmoryImpl extends AbstractArmory {
                 long e1 = System.currentTimeMillis();
 
                 System.out.println((e1-s1) + "ms - " + g);
+            }
+
+            Thread.sleep(3);
+        }
+        */
+
+        // Test reputations
+        int count = 1;
+        for (int i=0; i<count; i++) {
+            for (String name : names) {
+                long s1 = System.currentTimeMillis();
+
+                List<Faction> factions = armory.fetchCharacterReputation(name, "Dawnbringer", "US");
+
+                long e1 = System.currentTimeMillis();
+
+                for (Faction f : factions) {
+                    System.out.println(name + " - " + f);
+                }
             }
 
             Thread.sleep(3);
