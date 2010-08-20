@@ -22,14 +22,26 @@ import com.todc.wgrarmory.model.PlayerCharacter;
  */
 public interface Armory {
 
+    public Proxy getProxy();
     public void setProxy(String ip, int port);
 
-    public Proxy getProxy();
+    public boolean isFetchAchievementTitle();
+    public void setFetchAchievementTitle(boolean val);
+    public boolean isFetchAchievementDescription();
+    public void setFetchAchievementDescription(boolean val);
+    public boolean isFetchAchievementCriteria();
+    public void setFetchAchievementCriteria(boolean val);
+    public boolean isFetchSubAchievements();
+    public void setFetchSubAchievements(boolean val);
+
 
     public PlayerCharacter fetchCharacter(String charName, String realmName, String regionCode)
             throws Exception;
 
     public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category)
+            throws Exception;
+
+    public List<AchievementCategory> fetchCharacterAchievements(String charName, String realmName, String regionCode, int category, int[] subCategories)
             throws Exception;
 
 }
