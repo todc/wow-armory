@@ -70,6 +70,63 @@ public class DefaultArmoryImpl extends AbstractArmory {
     // --------------------------------------------------------- Public Methods
 
 
+    /**
+     * Retrieve guild info, including roster, from the Armory.
+     *
+     * @param guildName Name of the guild
+     * @param realmName Name of the realm
+     * @param regionCode Region code, e.g. US, EU, etc
+     * @return Matching guild object
+     * @throws Exception
+     */
+    public Guild fetchGuild(String guildName, String realmName, String regionCode) throws Exception {
+        String armoryHost = getArmoryHost(regionCode);
+        String rn = URLEncoder.encode(realmName, UTF8);
+        String gn = URLEncoder.encode(guildName, UTF8);
+
+        String url = "http://" + armoryHost + "/guild-info.xml?r=" + rn + "&gn=" + gn + "&rhtml=n";
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+
+        Element elGuildHeader = root.getChild("guildInfo").getChild("guildHeader");
+
+        Guild guild = new Guild();
+        guild.setName(elGuildHeader.getAttributeValue("name"));
+        guild.setRealmName(elGuildHeader.getAttributeValue("realm"));
+        guild.setRegionCode(regionCode.toUpperCase());
+        guild.setBattlegroup(elGuildHeader.getAttributeValue("battleGroup"));
+        guild.setFaction(elGuildHeader.getAttribute("faction").getIntValue());
+
+        List<Element> elements = root.getChild("guildInfo")
+                                     .getChild("guild")
+                                     .getChild("members")
+                                     .getChildren("character");
+
+        for (Element element : elements) {
+            PlayerCharacter character = new PlayerCharacter();
+            character.setRealm(guild.getRealmName());
+            character.setRegion(guild.getRegionCode());
+            character.setBattlegroup(guild.getBattlegroup());
+            character.setGuildName(guild.getName());
+
+            character.setName(element.getAttributeValue("name"));
+            character.setLevel(element.getAttribute("level").getIntValue());
+            character.setGender(element.getAttribute("genderId").getIntValue());
+            character.setPlayerClass(element.getAttribute("classId").getIntValue());
+            character.setRace(element.getAttribute("raceId").getIntValue());
+            character.setFaction(guild.getFaction());
+            character.setRank(element.getAttribute("rank").getIntValue());
+            character.setAchievementPoints(element.getAttribute("achPoints").getIntValue());
+
+            guild.addCharacter(character);
+        }
+
+        return guild;
+    }
+
+
     public PlayerCharacter fetchCharacter(String charName, String realmName, String regionCode)
             throws Exception
     {
@@ -329,8 +386,8 @@ public class DefaultArmoryImpl extends AbstractArmory {
         armory.setFetchAchievementCriteria(false);
         armory.setFetchSubAchievements(false);
 
+        /*
         String[] names = new String[] {"Gogan", "Kuramori", "Aozaru", "Haibane", "Asano", "Ikuya", "Orlandin", "Zol", "Zorthy", "Torchholder"};
-        //String[] names = new String[] {"Gogan"};
 
         int count = 3;
         for (int i=0; i<count; i++) {
@@ -350,6 +407,24 @@ public class DefaultArmoryImpl extends AbstractArmory {
                 for (AchievementCategory cat : achievCats) {
                     System.out.println(cat);
                 }
+            }
+
+            Thread.sleep(3);
+        }
+        */
+
+        String[] names = new String[] { "Gentlemen of Leisure" };
+
+        int count = 1;
+        for (int i=0; i<count; i++) {
+            for (String name : names) {
+                long s1 = System.currentTimeMillis();
+
+                Guild g = armory.fetchGuild(name, "Dawnbringer", "US");
+
+                long e1 = System.currentTimeMillis();
+
+                System.out.println((e1-s1) + "ms - " + g);
             }
 
             Thread.sleep(3);

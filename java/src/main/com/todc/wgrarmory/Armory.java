@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.todc.wgrarmory.model.Achievement;
 import com.todc.wgrarmory.model.AchievementCategory;
+import com.todc.wgrarmory.model.Guild;
 import com.todc.wgrarmory.model.PlayerCharacter;
 
 
@@ -41,6 +42,9 @@ public interface Armory {
     public boolean isFetchCharacterItems();
     public void setFetchCharacterItems(boolean val);
 
+
+    public Guild fetchGuild(String guildName, String realmName, String regionCode)
+            throws Exception;
 
     public PlayerCharacter fetchCharacter(String charName, String realmName, String regionCode)
             throws Exception;
