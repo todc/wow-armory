@@ -12,6 +12,8 @@ JDK 1.5
 
 * consider getting rid of Digester in favor of pure JDOM parsing. may be slightly more code for some pages, but will remove dependencies on the 3 commons jars
 
+* add fine-grained control over character-sheet fetch (e.g. fetch items? professions? secondary professions? talent specs?)
+
 * fetchGuild method
 * fetchCharacterStatistics method
 * fetchCharacterTalents method
