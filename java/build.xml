@@ -17,6 +17,8 @@
   <property name="build.main" value="${build}/main"/>
   <property name="build.test" value="${build}/test"/>
 
+  <property name="docs" value="${basedir}/docs"/>
+
   <property name="dist" value="${basedir}/dist"/>
 
 
@@ -38,6 +40,31 @@
     <javac destdir="${build.main}" srcdir="${src.main}" debug="true">
       <classpath refid="project.class.path"/>
     </javac>
+  </target>
+
+  <target name="docs">
+    <mkdir dir="${docs}"/>
+
+    <javadoc destdir="${docs}/api"
+             author="true"
+             version="true"
+             use="true"
+             windowtitle="WoW Armory Java API">
+
+      <packageset dir="${src.main}" includes="com/todc/**" defaultexcludes="yes"/>
+
+      <classpath>
+        <fileset dir="${lib.required}">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+
+      <doctitle><![CDATA[<h1>WoW Armory Java API</h1>]]></doctitle>
+      <bottom><![CDATA[<i>Copyright &#169; 2010 Tim O'Donnell. All Rights Reserved.</i>]]></bottom>
+      <tag name="todo" scope="all" description="To do:"/>
+      <link offline="false" href="http://java.sun.com/j2se/1.6.0/docs/api/" packagelistLoc="C:\tmp"/>
+      <link href="http://developer.java.sun.com/developer/products/xml/docs/api/"/>
+    </javadoc>
   </target>
 
   <target name="dist">
