@@ -19,6 +19,23 @@ import java.util.List;
 public class Guild {
 
 
+    // -------------------------------------------------------------- Constants
+
+
+    public static final int ALLIANCE = 0;
+    public static final int HORDE = 1;
+
+    private static String[] m_factionNames = new String[] {"Alliance", "Horde"};
+
+
+    // --------------------------------------------------------- Static Methods
+
+
+    public static String getFactionName(int faction) {
+        return m_factionNames[faction];
+    }
+
+
     // ----------------------------------------------------- Instance Variables
 
 
