@@ -262,4 +262,7 @@ public interface Armory {
     public List<FeedEntry> fetchCharacterFeed(String charName, String realmName, String regionCode, FeedFilter filter)
             throws Exception;
 
+
+    public List<ArenaTeam> fetchArenaLadder(String regionCode, String battlegroup, ArenaFilter filter) throws Exception;
+
 }

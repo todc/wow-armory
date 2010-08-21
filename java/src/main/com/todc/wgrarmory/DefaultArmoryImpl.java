@@ -675,6 +675,65 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    @SuppressWarnings("unchecked")
+    public List<ArenaTeam> fetchArenaLadder(String regionCode, String battlegroup, ArenaFilter filter) throws Exception {
+        String armoryHost = getArmoryHost(regionCode);
+        String bg = URLEncoder.encode(battlegroup, UTF8);
+
+        String url = "http://" + armoryHost + "/arena-ladder.xml?rhtml=n&b=" + bg + "&ts=" + filter.getLadder();
+
+        if (filter.getRealm() != null) {
+            url += "&ff=realm&fv=" + URLEncoder.encode(filter.getRealm(), UTF8);
+        }
+
+        if (filter.getSortBy() != null) {
+            url += "&sf=" + filter.getSortBy() + "&sd=" + filter.getSortDir();
+        }
+
+        if (filter.getPage() > 0) {
+            url += "&p=" + filter.getPage();
+        }
+
+        LOG.info("Requesting URL: " + url);
+        String responseBody = this.httpGet(url);
+        System.out.println(responseBody);
+
+        Element root = toXml(responseBody);
+
+        Element elPagedResult = root.getChild("arenaLadderPagedResult");
+        filter.setMaxPages(elPagedResult.getAttribute("maxPage").getIntValue());
+
+        List<ArenaTeam> teams = new ArrayList<ArenaTeam>();
+
+        List<Element> xmlTeams = root.getChild("arenaLadderPagedResult")
+                                     .getChild("arenaTeams")
+                                     .getChildren("arenaTeam");
+        
+        for (Element elTeam : xmlTeams) {
+            ArenaTeam team = new ArenaTeam();
+
+            team.setBattlegroup(elTeam.getAttributeValue("battleGroup"));
+            team.setCreated(elTeam.getAttribute("created").getLongValue());
+            team.setFaction(elTeam.getAttribute("factionId").getIntValue());
+            team.setGamesPlayed(elTeam.getAttribute("gamesPlayed").getIntValue());
+            team.setGamesWon(elTeam.getAttribute("gamesWon").getIntValue());
+            team.setLastSeasonRank(elTeam.getAttribute("lastSeasonRanking").getIntValue());
+            team.setName(elTeam.getAttributeValue("name"));
+            team.setRank(elTeam.getAttribute("ranking").getIntValue());
+            team.setRating(elTeam.getAttribute("rating").getIntValue());
+            team.setRealm(elTeam.getAttributeValue("realm"));
+            team.setSeasonGamesPlayed(elTeam.getAttribute("seasonGamesPlayed").getIntValue());
+            team.setSeasonGamesWon(elTeam.getAttribute("seasonGamesWon").getIntValue());
+            team.setSize(elTeam.getAttribute("size").getIntValue());
+            team.setTeamSize(elTeam.getAttribute("teamSize").getIntValue());
+
+            teams.add(team);
+        }
+
+        return teams;
+    }
+
+
     // -------------------------------------------------------- Private Methods
 
 
