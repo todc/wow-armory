@@ -14,6 +14,22 @@ package com.todc.wgrarmory.model;
  */
 public class Statistic {
 
+
+    // -------------------------------------------------------------- Constants
+
+
+    public static final int CAT_CHARACTER = 130;
+    public static final int CAT_COMBAT = 141;
+    public static final int CAT_KILLS = 128;
+    public static final int CAT_DEATHS = 122;
+    public static final int CAT_QUESTS = 133;
+    public static final int CAT_DUNGEONS = 14807;
+    public static final int CAT_SKILLS = 132;
+    public static final int CAT_TRAVEL = 134;
+    public static final int CAT_SOCIAL = 131;
+    public static final int CAT_PVP = 21;
+
+
     // ----------------------------------------------------- Instance Variables
 
 
