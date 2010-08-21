@@ -159,7 +159,9 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
         PlayerCharacter character = new PlayerCharacter();
         character.setName(elChar.getAttributeValue("name"));
+        character.setLevel(elChar.getAttribute("level").getIntValue());
         character.setRealm(elChar.getAttributeValue("realm"));
+        character.setRegion(regionCode.toUpperCase());
         character.setBattlegroup(elChar.getAttributeValue("battleGroup"));
         character.setPlayerClass(elChar.getAttribute("classId").getIntValue());
         character.setRace(elChar.getAttribute("raceId").getIntValue());
@@ -167,7 +169,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
         character.setFaction(elChar.getAttribute("factionId").getIntValue());
         character.setAchievementPoints(elChar.getAttribute("points").getIntValue());
         character.setTitleId(elChar.getAttribute("titleId").getIntValue());
-        character.setTitle(elChar.getAttributeValue("title"));
+        character.setTitle(elChar.getAttributeValue("suffix"));
         character.setGuildName(elChar.getAttributeValue("guildName"));
 
         if (fetchCharacterTalents) {
@@ -194,8 +196,12 @@ public class DefaultArmoryImpl extends AbstractArmory {
                 item.setSlot(elItem.getAttribute("slot").getIntValue());
                 item.setId(elItem.getAttribute("id").getIntValue());
                 item.setName(elItem.getAttributeValue("name"));
-                item.setRarity(elItem.getAttribute("name").getIntValue());
-                item.setEnchantId(elItem.getAttribute("permanentEnchantItemId").getIntValue());
+                item.setRarity(elItem.getAttribute("rarity").getIntValue());
+
+                String enchantId = elItem.getAttributeValue("permanentEnchantItemId");
+                if (enchantId != null) {
+                    item.setEnchantId(Integer.parseInt(enchantId));
+                }
                 item.setGem0Id(elItem.getAttribute("gem0Id").getIntValue());
                 item.setGem1Id(elItem.getAttribute("gem1Id").getIntValue());
                 item.setGem2Id(elItem.getAttribute("gem2Id").getIntValue());
@@ -718,7 +724,6 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
         //String[] names = new String[] {"Gogan", "Kuramori", "Aozaru", "Haibane", "Asano", "Ikuya", "Orlandin", "Zol", "Zorthy", "Torchholder"};
         String[] names = new String[] {"Gogan"};
-        String[] guilds = new String[] { "Gentlemen of Leisure" };
 
         /*
         // Test character and achievements
@@ -740,24 +745,6 @@ public class DefaultArmoryImpl extends AbstractArmory {
                 for (AchievementCategory cat : achievCats) {
                     System.out.println(cat);
                 }
-            }
-
-            Thread.sleep(3);
-        }
-        */
-
-        /*
-        // Test guild
-        int count = 1;
-        for (int i=0; i<count; i++) {
-            for (String name : guilds) {
-                long s1 = System.currentTimeMillis();
-
-                Guild g = armory.fetchGuild(name, "Dawnbringer", "US");
-
-                long e1 = System.currentTimeMillis();
-
-                System.out.println((e1-s1) + "ms - " + g);
             }
 
             Thread.sleep(3);
