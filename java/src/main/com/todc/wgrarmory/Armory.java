@@ -245,4 +245,21 @@ public interface Armory {
     public Map<String,List<Statistic>> fetchCharacterStatistics(String charName, String realmName, String regionCode, int category, String[] subCategories)
             throws Exception;
 
+
+    /**
+     * Fetch entries from the character feed which match the given filter
+     * criteria. Perform Armory request to character-feed.atom.
+     *
+     * @param charName Character name
+     * @param realmName Realm name
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param filter Filter criteria
+     *
+     * @return List of matching FeedEntry objects
+     *
+     * @throws Exception
+     */
+    public List<FeedEntry> fetchCharacterFeed(String charName, String realmName, String regionCode, FeedFilter filter)
+            throws Exception;
+
 }

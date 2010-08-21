@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
 
 import org.slf4j.Logger;
@@ -582,6 +583,100 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
 
         return categories;
+    }
+
+
+    /**
+     * Fetch entries from the character feed which match the given filter
+     * criteria. Perform Armory request to character-feed.atom.
+     *
+     * @param charName Character name
+     * @param realmName Realm name
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param filter Filter criteria
+     *
+     * @return List of matching FeedEntry objects
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public List<FeedEntry> fetchCharacterFeed(String charName, String realmName, String regionCode, FeedFilter filter)
+            throws Exception
+    {
+        String armoryHost = getArmoryHost(regionCode);
+        String rn = URLEncoder.encode(realmName, UTF8);
+        String cn = URLEncoder.encode(charName, UTF8);
+
+        String url = "http://" + armoryHost + "/character-feed.atom?r=" + rn + "&cn=" + cn;
+
+        String[] filters = filter.getFilters();
+        if (filters != null) {
+            String filtersParam = "&filters=";
+            for (int i=0; i<filters.length; i++) {
+                filtersParam += filters[i];
+                if (i+1 < filters.length) {
+                    filtersParam += ",";
+                }
+            }
+
+            url += filtersParam;
+        }
+
+        Integer[] categories = filter.getAchCategories();
+        if (categories != null) {
+            String catParam = "&achCategories=";
+            for (int i=0; i<categories.length; i++) {
+                catParam += categories[i];
+                if (i+1 < categories.length) {
+                    catParam += ",";
+                }
+            }
+
+            url += catParam;
+        }
+
+        if (filter.getItemQuality() != null) {
+            url += "&itemQuality=" + filter.getItemQuality();
+        }
+
+        if (filter.getItemLevel() > 0) {
+            url += "&itemLevel=" + filter.getItemLevel();
+        }
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+        Namespace ns = root.getNamespace();
+
+        List<FeedEntry> entries = new ArrayList<FeedEntry>();
+
+        List<Element> xmlEntries = root.getChildren("entry", ns);
+        for (Element elEntry : xmlEntries) {
+            FeedEntry entry = new FeedEntry();
+            entry.setContent(elEntry.getChildText("content", ns));
+            entry.setId(elEntry.getChildText("id", ns));
+            entry.setLink(elEntry.getChildText("link", ns));
+
+            String rawPublished = elEntry.getChildText("published", ns);
+            if (rawPublished != null) {
+                rawPublished = rawPublished.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
+                Date published = m_sdfLong.parse(rawPublished);
+                entry.setPublished(published);
+            }
+
+            entry.setTitle(elEntry.getChildText("title", ns));
+
+            String rawUpdated = elEntry.getChildText("updated", ns);
+            if (rawUpdated != null) {
+                rawUpdated = rawUpdated.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
+                Date updated = m_sdfLong.parse(rawUpdated);
+                entry.setUpdated(updated);
+            }
+
+            entries.add(entry);
+        }
+
+        return entries;
     }
 
 

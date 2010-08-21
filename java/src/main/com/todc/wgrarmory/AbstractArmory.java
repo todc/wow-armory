@@ -146,6 +146,8 @@ public abstract class AbstractArmory implements Armory {
 
 
     protected String httpGet(String sURL) throws Exception {
+        LOG.debug("Requesting URL: " + sURL);
+
         URL url = new URL(sURL);
         HttpURLConnection conn;
         if (this.getProxy() == null) {
