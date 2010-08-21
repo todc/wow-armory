@@ -24,6 +24,9 @@ public interface Armory {
     public Proxy getProxy();
     public void setProxy(String ip, int port);
 
+    public int getFetchMinLevel();
+    public void setFetchMinLevel(int val);
+
     public boolean isFetchAchievementTitle();
     public void setFetchAchievementTitle(boolean val);
     public boolean isFetchAchievementDescription();

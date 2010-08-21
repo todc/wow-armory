@@ -24,6 +24,7 @@ public class FetchGuildExample {
     public static void main(String... args) throws Exception {
 
         Armory armory = new DefaultArmoryImpl();
+        armory.setFetchMinLevel(80); // only return level 80 characters
 
         Guild guild = armory.fetchGuild("Gentlemen of Leisure", "Dawnbringer", "US");
 

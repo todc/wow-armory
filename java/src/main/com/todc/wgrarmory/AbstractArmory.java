@@ -37,6 +37,9 @@ public abstract class AbstractArmory implements Armory {
 
 
     protected Properties config = null;
+
+    protected int fetchMinLevel = 1;
+
     protected boolean fetchAchievementTitle = true;
     protected boolean fetchAchievementDescription = true;
     protected boolean fetchAchievementCriteria = true;
@@ -72,6 +75,14 @@ public abstract class AbstractArmory implements Armory {
 
     public Proxy getProxy() {
         return m_proxy;
+    }
+
+    public int getFetchMinLevel() {
+        return fetchMinLevel;
+    }
+
+    public void setFetchMinLevel(int fetchMinLevel) {
+        this.fetchMinLevel = fetchMinLevel;
     }
 
     public boolean isFetchAchievementTitle() {

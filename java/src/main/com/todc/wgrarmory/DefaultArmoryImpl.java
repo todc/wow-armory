@@ -103,22 +103,26 @@ public class DefaultArmoryImpl extends AbstractArmory {
                                      .getChildren("character");
 
         for (Element element : elements) {
-            PlayerCharacter character = new PlayerCharacter();
-            character.setRealm(guild.getRealmName());
-            character.setRegion(guild.getRegionCode());
-            character.setBattlegroup(guild.getBattlegroup());
-            character.setGuildName(guild.getName());
+            int level = element.getAttribute("level").getIntValue();
 
-            character.setName(element.getAttributeValue("name"));
-            character.setLevel(element.getAttribute("level").getIntValue());
-            character.setGender(element.getAttribute("genderId").getIntValue());
-            character.setPlayerClass(element.getAttribute("classId").getIntValue());
-            character.setRace(element.getAttribute("raceId").getIntValue());
-            character.setFaction(guild.getFaction());
-            character.setRank(element.getAttribute("rank").getIntValue());
-            character.setAchievementPoints(element.getAttribute("achPoints").getIntValue());
+            if (level >= fetchMinLevel) {
+                PlayerCharacter character = new PlayerCharacter();
+                character.setRealm(guild.getRealmName());
+                character.setRegion(guild.getRegionCode());
+                character.setBattlegroup(guild.getBattlegroup());
+                character.setGuildName(guild.getName());
 
-            guild.addCharacter(character);
+                character.setName(element.getAttributeValue("name"));
+                character.setLevel(element.getAttribute("level").getIntValue());
+                character.setGender(element.getAttribute("genderId").getIntValue());
+                character.setPlayerClass(element.getAttribute("classId").getIntValue());
+                character.setRace(element.getAttribute("raceId").getIntValue());
+                character.setFaction(guild.getFaction());
+                character.setRank(element.getAttribute("rank").getIntValue());
+                character.setAchievementPoints(element.getAttribute("achPoints").getIntValue());
+
+                guild.addCharacter(character);
+            }
         }
 
         return guild;
