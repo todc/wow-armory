@@ -24,10 +24,14 @@ public class FetchGuildExample {
     public static void main(String... args) throws Exception {
 
         Armory armory = new DefaultArmoryImpl();
-        armory.setFetchMinLevel(80); // only return level 80 characters
 
+        // only return level 80 characters
+        armory.setFetchMinLevel(80);
+
+        // send the request to the armory
         Guild guild = armory.fetchGuild("Gentlemen of Leisure", "Dawnbringer", "US");
 
+        // display result
         System.out.println("Guild Info");
         System.out.println("----------");
         System.out.println("Name:        " + guild.getName());
@@ -40,6 +44,7 @@ public class FetchGuildExample {
         System.out.println("Guild Roster");
         System.out.println("------------");
 
+        // iterate through guild roster and print each character
         List<PlayerCharacter> roster = guild.getRoster();
         for (PlayerCharacter player : roster) {
             System.out.println(
