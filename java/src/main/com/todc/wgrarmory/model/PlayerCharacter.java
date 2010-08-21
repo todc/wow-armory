@@ -50,14 +50,37 @@ public class PlayerCharacter {
     public static final int WARLOCK = 9;
     public static final int WARRIOR = 1;
 
+    private static String[] m_factionNames = new String[] {"Alliance", "Horde"};
+    private static String[] m_genderNames = new String[] {"Male", "Female"};
+    private static String[] m_raceNames = new String[] {"", "Human", "Orc", "Dwarf", "Night Elf", "Undead", "Tauren", "Gnome", "Troll", "", "Blood Elf", "Draenei"};
+    private static String[] m_classNames = new String[] {"", "Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "", "Druid"};
+
+
+    // --------------------------------------------------------- Static Methods
+
+
+    public static String getGenderName(int gender) {
+        return m_genderNames[gender];
+    }
+
+
+    public static String getFactionName(int faction) {
+        return m_factionNames[faction];
+    }
+
+
+    public static String getRaceName(int race) {
+        return m_raceNames[race];
+    }
+
+
+    public static String getClassName(int classId) {
+        return m_classNames[classId];
+    }
+
 
     // ----------------------------------------------------- Instance Variables
 
-
-    private String[] m_factionNames = new String[] {"Alliance", "Horde"};
-    private String[] m_genderNames = new String[] {"Male", "Female"};
-    private String[] m_raceNames = new String[] {"", "Human", "Orc", "Dwarf", "Night Elf", "Undead", "Tauren", "Gnome", "Troll", "", "Blood Elf", "Draenei"};
-    private String[] m_classNames = new String[] {"", "Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Death Knight", "Shaman", "Mage", "Warlock", "", "Druid"};
 
     private String m_name;
     private int m_playerClass;
@@ -226,25 +249,6 @@ public class PlayerCharacter {
 
     // --------------------------------------------------------- Public Methods
 
-
-    public String getGenderName(int gender) {
-        return m_genderNames[gender];
-    }
-
-
-    public String getFactionName(int faction) {
-        return m_factionNames[faction];
-    }
-
-
-    public String getRaceName(int race) {
-        return m_raceNames[race];
-    }
-
-
-    public String getClassName(int classId) {
-        return m_classNames[classId];
-    }
 
     public void addTalentSpec(TalentSpec spec) {
         m_talentSpecs.add(spec);
