@@ -749,18 +749,25 @@ public class DefaultArmoryImpl extends AbstractArmory {
      * Fetch arena team members for the given team. At a minimum, the following
      * fields must be set on the given team: regionCode, realm, name, teamSize.
      *
-     * @param team Arena Team object
+     * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
+     *        ArenaFilter
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param realmName Name of realm
+     * @param teamName Name of arena team
      *
      * @return List of matching ArenaTeamMember objects
      *
      * @throws Exception
      */
-    public List<ArenaTeamMember> fetchArenaTeamMembers(ArenaTeam team) throws Exception {
-        String armoryHost = getArmoryHost(team.getRegionCode());
-        String realm = URLEncoder.encode(team.getRealm(), UTF8);
-        String teamName = URLEncoder.encode(team.getName(), UTF8);
+    @SuppressWarnings("unchecked")
+    public List<ArenaTeamMember> fetchArenaTeamMembers(int ladder, String regionCode, String realmName, String teamName)
+            throws Exception
+    {
+        String armoryHost = getArmoryHost(regionCode);
+        String r = URLEncoder.encode(realmName, UTF8);
+        String t = URLEncoder.encode(teamName, UTF8);
 
-        String url = "http://" + armoryHost + "/team-info.xml?rhtml=n&r=" + realm + "&ts=" + team.getTeamSize() + "&t=" + teamName;
+        String url = "http://" + armoryHost + "/team-info.xml?rhtml=n&r=" + r + "&ts=" + ladder + "&t=" + t;
 
         String responseBody = this.httpGet(url);
 
@@ -788,7 +795,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
             member.setName(elMember.getAttributeValue("name"));
             member.setRaceId(elMember.getAttribute("raceId").getIntValue());
             member.setRealm(elMember.getAttributeValue("realm"));
-            member.setRegionCode(team.getRegionCode().toUpperCase());
+            member.setRegionCode(regionCode.toUpperCase());
             member.setSeasonGamesPlayed(elMember.getAttribute("seasonGamesPlayed").getIntValue());
             member.setSeasonGamesWon(elMember.getAttribute("seasonGamesWon").getIntValue());
             member.setTeamRank(elMember.getAttribute("teamRank").getIntValue());
@@ -797,6 +804,46 @@ public class DefaultArmoryImpl extends AbstractArmory {
         }
 
         return members;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public List<ArenaMatch> fetchArenaTeamMatchHistory(int ladder, String regionCode, String realmName, String teamName)
+            throws Exception
+    {
+        String armoryHost = getArmoryHost(regionCode);
+        String r = URLEncoder.encode(realmName, UTF8);
+        String t = URLEncoder.encode(teamName, UTF8);
+
+        String url = "http://" + armoryHost + "/arena-team-game-chart.xml?rhtml=n&r=" + r + "&ts=" + ladder + "&t=" + t;
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+
+        List<ArenaMatch> matches = new ArrayList<ArenaMatch>();
+
+        List<Element> xmlGames = root.getChild("gameListingChart")
+                                     .getChild("games")
+                                     .getChildren("game");
+
+        for (Element elGame : xmlGames) {
+            ArenaMatch match = new ArenaMatch();
+
+            match.setBattlgroup(root.getChild("gameListingChart").getChild("arenaTeam").getAttributeValue("battleGroup"));
+
+            long time = elGame.getAttribute("st").getLongValue();
+            match.setDate(new Date(time));
+
+            match.setDeleted(elGame.getAttribute("deleted").getBooleanValue());
+            match.setId(elGame.getAttribute("id").getIntValue());
+            match.setNewRating(elGame.getAttribute("r").getIntValue());
+            match.setOtherTeamName(elGame.getAttributeValue("ot"));
+
+            matches.add(match);
+        }
+
+        return matches;
     }
 
 

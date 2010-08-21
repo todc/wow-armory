@@ -12,10 +12,7 @@ import java.util.List;
 
 import com.todc.wgrarmory.Armory;
 import com.todc.wgrarmory.DefaultArmoryImpl;
-import com.todc.wgrarmory.model.ArenaFilter;
-import com.todc.wgrarmory.model.ArenaTeam;
-import com.todc.wgrarmory.model.ArenaTeamMember;
-import com.todc.wgrarmory.model.PlayerCharacter;
+import com.todc.wgrarmory.model.*;
 
 
 /**
@@ -26,6 +23,12 @@ public class FetchArenaLadderExample {
     public static void main(String... args) throws Exception {
 
         Armory armory = new DefaultArmoryImpl();
+
+        // --------------------------------------------------------------------
+        //
+        // Fetch Arena Teams
+        //
+        // --------------------------------------------------------------------
 
         // Define a filter for the request. At a minimum, you need to specify
         // which ladder you want, e.g. 2v2, 3v3, 5v5.
@@ -54,22 +57,54 @@ public class FetchArenaLadderExample {
         }
 
 
+        // --------------------------------------------------------------------
+        //
+        // Fetch Team Members
+        //
+        // --------------------------------------------------------------------
+
         // get the first team and display the members
-        if (teams.size() > 0) {
-            ArenaTeam team = teams.get(0);
+        ArenaTeam team = teams.get(0);
 
-            // request the member list from the armory
-            List<ArenaTeamMember> members = armory.fetchArenaTeamMembers(team);
+        // request the member list from the armory
+        List<ArenaTeamMember> members = armory.fetchArenaTeamMembers(
+            team.getTeamSize(),
+            team.getRegionCode(),
+            team.getRealm(),
+            team.getName()
+        );
 
-            System.out.println("");
-            System.out.println("Members of team: " + team.getName());
+        System.out.println("");
+        System.out.println("Members of team: " + team.getName());
 
-            for (ArenaTeamMember member : members) {
-                System.out.println("   " +
-                    member.getName() + " (" + PlayerCharacter.getClassName( member.getClassId() ) + ") - " +
-                    member.getSeasonGamesWon() + " wins, " + member.getSeasonGamesLost() + " losses"
-                );
-            }
+        for (ArenaTeamMember member : members) {
+            System.out.println("   " +
+                member.getName() + " (" + PlayerCharacter.getClassName( member.getClassId() ) + ") - " +
+                member.getSeasonGamesWon() + " wins, " + member.getSeasonGamesLost() + " losses"
+            );
+        }
+
+
+        // --------------------------------------------------------------------
+        //
+        // Fetch Team Match History
+        //
+        // --------------------------------------------------------------------
+
+        List<ArenaMatch> matches = armory.fetchArenaTeamMatchHistory(
+            team.getTeamSize(),
+            team.getRegionCode(),
+            team.getRealm(),
+            team.getName()
+        );
+
+        System.out.println("");
+        System.out.println("First 10 Matches");
+
+        for (int i=0; i<10; i++) {
+            ArenaMatch match = matches.get(i);
+
+            System.out.println("   " + match.getDate() + " " + match.getOtherTeamName() + " (" + match.getNewRating() + ")");
         }
 
     }
