@@ -47,6 +47,13 @@ public class Item {
         m_name = name;
     }
 
+    /**
+     * Get the armory slot number for this item.
+     * NOTE: On the Armory, equipment slots start at zero (0), but in-game they
+     * start at one (1).
+     *
+     * @return Slot number, starting at zero (0).
+     */
     public int getSlot() {
         return m_slot;
     }
