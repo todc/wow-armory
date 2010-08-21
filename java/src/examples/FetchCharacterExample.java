@@ -65,11 +65,21 @@ public class FetchCharacterExample {
 
 
         System.out.println("");
-        System.out.println("Professions");
-        System.out.println("-----------");
+        System.out.println("Primary Professions");
+        System.out.println("-------------------");
 
         List<Profession> professions = player.getProfessions();
         for (Profession prof : professions) {
+            System.out.println(prof.getValue() + " " + prof.getName());
+        }
+
+
+        System.out.println("");
+        System.out.println("Secondary Professions");
+        System.out.println("---------------------");
+
+        List<Profession> secProfessions = player.getSecondaryProfessions();
+        for (Profession prof : secProfessions) {
             System.out.println(prof.getValue() + " " + prof.getName());
         }
 

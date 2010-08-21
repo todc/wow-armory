@@ -172,6 +172,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
         character.setTitle(elChar.getAttributeValue("suffix"));
         character.setGuildName(elChar.getAttributeValue("guildName"));
 
+        // Fetch talents?
         if (fetchCharacterTalents) {
             Element elTalentSpecs = root.getChild("characterInfo").getChild("characterTab").getChild("talentSpecs");
             List<Element> xmlTalentSpecs = elTalentSpecs.getChildren("talentSpec");
@@ -188,6 +189,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
             }
         }
 
+        // Fetch items?
         if (fetchCharacterItems) {
             Element elItems = root.getChild("characterInfo").getChild("characterTab").getChild("items");
             List<Element> xmlItems = elItems.getChildren("item");
@@ -210,6 +212,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
             }
         }
 
+        // Fetch professions?
         if (fetchCharacterProfessions) {
             Element elProfessions = root.getChild("characterInfo").getChild("characterTab").getChild("professions");
             List<Element> xmlSkills = elProfessions.getChildren("skill");
@@ -232,7 +235,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
                 prof.setMax(elSkill.getAttribute("max").getIntValue());
                 prof.setValue(elSkill.getAttribute("value").getIntValue());
 
-                character.addProfession(prof);
+                character.addSecondaryProfession(prof);
             }
         }
 

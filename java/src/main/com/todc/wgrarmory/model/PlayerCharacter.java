@@ -230,6 +230,14 @@ public class PlayerCharacter {
         m_professions = professions;
     }
 
+    public List<Profession> getSecondaryProfessions() {
+        return m_secondaryProfessions;
+    }
+
+    public void setSecondaryProfessions(List<Profession> secondaryProfessions) {
+        m_secondaryProfessions = secondaryProfessions;
+    }
+
     public List<TalentSpec> getTalentSpecs() {
         return m_talentSpecs;
     }
