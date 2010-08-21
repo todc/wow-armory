@@ -191,6 +191,28 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
                 character.addTalentSpec(spec);
             }
+
+            // get active glyphs
+            List<Element> xmlGlyphs = root.getChild("characterInfo")
+                                          .getChild("characterTab")
+                                          .getChild("glyphs")
+                                          .getChildren("glyph");
+
+            TalentSpec primaryTalentSpec = character.getPrimaryTalentSpec();
+
+            for (Element elGlyph : xmlGlyphs) {
+                Glyph glyph = new Glyph();
+                glyph.setId(elGlyph.getAttribute("id").getIntValue());
+                glyph.setName(elGlyph.getAttributeValue("name"));
+                glyph.setEffect(elGlyph.getAttributeValue("effect"));
+
+                String type = elGlyph.getAttributeValue("type");
+                if (type.equals("major")) glyph.setType(Glyph.MAJOR);
+                if (type.equals("minor")) glyph.setType(Glyph.MINOR);
+
+                primaryTalentSpec.addGlyph(glyph);
+            }
+
         }
 
         // Fetch items?

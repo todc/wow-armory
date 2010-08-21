@@ -15,8 +15,21 @@ package com.todc.wgrarmory.model;
 public class Glyph {
 
 
+    // -------------------------------------------------------------- Constants
+
+
     public static final int MAJOR = 1;
     public static final int MINOR = 2;
+
+    private static final String[] names = new String[] { "", "Major", "Minor" };
+
+
+    // --------------------------------------------------------- Static Methods
+
+
+    public static String getTypeName(int type) {
+        return names[type];
+    }
 
 
     // ----------------------------------------------------- Instance Variables

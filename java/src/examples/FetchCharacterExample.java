@@ -65,6 +65,15 @@ public class FetchCharacterExample {
 
 
         System.out.println("");
+        System.out.println("Active Glyphs");
+        System.out.println("-------------");
+
+        for (Glyph glyph : primarySpec.getGlyphs()) {
+            System.out.println( Glyph.getTypeName(glyph.getType()) + " - " + glyph.getName() );
+        }
+
+
+        System.out.println("");
         System.out.println("Primary Professions");
         System.out.println("-------------------");
 
