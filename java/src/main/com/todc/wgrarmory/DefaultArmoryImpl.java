@@ -653,25 +653,20 @@ public class DefaultArmoryImpl extends AbstractArmory {
         List<Element> xmlEntries = root.getChildren("entry", ns);
         for (Element elEntry : xmlEntries) {
             FeedEntry entry = new FeedEntry();
+            entry.setTitle(elEntry.getChildText("title", ns));
             entry.setContent(elEntry.getChildText("content", ns));
             entry.setId(elEntry.getChildText("id", ns));
             entry.setLink(elEntry.getChildText("link", ns));
 
             String rawPublished = elEntry.getChildText("published", ns);
-            if (rawPublished != null) {
-                rawPublished = rawPublished.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
-                Date published = m_sdfLong.parse(rawPublished);
-                entry.setPublished(published);
-            }
-
-            entry.setTitle(elEntry.getChildText("title", ns));
+            rawPublished = rawPublished.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
+            Date published = m_sdfLong.parse(rawPublished);
+            entry.setPublished(published);
 
             String rawUpdated = elEntry.getChildText("updated", ns);
-            if (rawUpdated != null) {
-                rawUpdated = rawUpdated.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
-                Date updated = m_sdfLong.parse(rawUpdated);
-                entry.setUpdated(updated);
-            }
+            rawUpdated = rawUpdated.replaceAll("([+-])(\\d\\d):(\\d\\d)$", "$1$2$3");
+            Date updated = m_sdfLong.parse(rawUpdated);
+            entry.setUpdated(updated);
 
             entries.add(entry);
         }
