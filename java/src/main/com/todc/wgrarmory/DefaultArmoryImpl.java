@@ -675,6 +675,18 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch arena teams according to the filter criteria supplied.
+     *
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param battlegroup Name of battlegroup (e.g. Bloodlust, Retaliation, etc)
+     * @param filter Filter criteria. At a minimum, a ladder type (e.g. 3v3)
+     *        must be specified in the filter.
+     *
+     * @return List of matching ArenaTeam objects
+     *
+     * @throws Exception
+     */
     @SuppressWarnings("unchecked")
     public List<ArenaTeam> fetchArenaLadder(String regionCode, String battlegroup, ArenaFilter filter) throws Exception {
         String armoryHost = getArmoryHost(regionCode);
@@ -694,9 +706,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
             url += "&p=" + filter.getPage();
         }
 
-        LOG.info("Requesting URL: " + url);
         String responseBody = this.httpGet(url);
-        System.out.println(responseBody);
 
         Element root = toXml(responseBody);
 
@@ -722,6 +732,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
             team.setRank(elTeam.getAttribute("ranking").getIntValue());
             team.setRating(elTeam.getAttribute("rating").getIntValue());
             team.setRealm(elTeam.getAttributeValue("realm"));
+            team.setRegionCode(regionCode.toUpperCase());
             team.setSeasonGamesPlayed(elTeam.getAttribute("seasonGamesPlayed").getIntValue());
             team.setSeasonGamesWon(elTeam.getAttribute("seasonGamesWon").getIntValue());
             team.setSize(elTeam.getAttribute("size").getIntValue());
@@ -731,6 +742,61 @@ public class DefaultArmoryImpl extends AbstractArmory {
         }
 
         return teams;
+    }
+
+
+    /**
+     * Fetch arena team members for the given team. At a minimum, the following
+     * fields must be set on the given team: regionCode, realm, name, teamSize.
+     *
+     * @param team Arena Team object
+     *
+     * @return List of matching ArenaTeamMember objects
+     *
+     * @throws Exception
+     */
+    public List<ArenaTeamMember> fetchArenaTeamMembers(ArenaTeam team) throws Exception {
+        String armoryHost = getArmoryHost(team.getRegionCode());
+        String realm = URLEncoder.encode(team.getRealm(), UTF8);
+        String teamName = URLEncoder.encode(team.getName(), UTF8);
+
+        String url = "http://" + armoryHost + "/team-info.xml?rhtml=n&r=" + realm + "&ts=" + team.getTeamSize() + "&t=" + teamName;
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+
+        List<ArenaTeamMember> members = new ArrayList<ArenaTeamMember>();
+
+        List<Element> xmlMembers = root.getChild("teamInfo")
+                                       .getChild("arenaTeam")
+                                       .getChild("members")
+                                       .getChildren("character");
+
+        for (Element elMember : xmlMembers) {
+            ArenaTeamMember member = new ArenaTeamMember();
+
+            member.setBattlegroup(elMember.getAttributeValue("battleGroup"));
+            member.setClassId(elMember.getAttribute("classId").getIntValue());
+            member.setContribution(elMember.getAttribute("contribution").getIntValue());
+            member.setGamesPlayed(elMember.getAttribute("gamesPlayed").getIntValue());
+            member.setGamesWon(elMember.getAttribute("gamesWon").getIntValue());
+            member.setName(elMember.getAttributeValue("name"));
+            member.setGenderId(elMember.getAttribute("genderId").getIntValue());
+            member.setGuildId(elMember.getAttribute("guildId").getLongValue());
+            member.setGuildName(elMember.getAttributeValue("guild"));
+            member.setName(elMember.getAttributeValue("name"));
+            member.setRaceId(elMember.getAttribute("raceId").getIntValue());
+            member.setRealm(elMember.getAttributeValue("realm"));
+            member.setRegionCode(team.getRegionCode().toUpperCase());
+            member.setSeasonGamesPlayed(elMember.getAttribute("seasonGamesPlayed").getIntValue());
+            member.setSeasonGamesWon(elMember.getAttribute("seasonGamesWon").getIntValue());
+            member.setTeamRank(elMember.getAttribute("teamRank").getIntValue());
+
+            members.add(member);
+        }
+
+        return members;
     }
 
 

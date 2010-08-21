@@ -18,6 +18,7 @@ public class ArenaTeam {
     // ----------------------------------------------------- Instance Variables
 
 
+    private String m_regionCode;
     private int m_rank;
     private String m_name;
     private String m_battlegroup;
@@ -36,6 +37,14 @@ public class ArenaTeam {
 
     // ------------------------------------------------------ Getters / Setters
 
+
+    public String getRegionCode() {
+        return m_regionCode;
+    }
+
+    public void setRegionCode(String regionCode) {
+        m_regionCode = regionCode;
+    }
 
     public int getRank() {
         return m_rank;

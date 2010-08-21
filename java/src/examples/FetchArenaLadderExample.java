@@ -14,6 +14,8 @@ import com.todc.wgrarmory.Armory;
 import com.todc.wgrarmory.DefaultArmoryImpl;
 import com.todc.wgrarmory.model.ArenaFilter;
 import com.todc.wgrarmory.model.ArenaTeam;
+import com.todc.wgrarmory.model.ArenaTeamMember;
+import com.todc.wgrarmory.model.PlayerCharacter;
 
 
 /**
@@ -40,12 +42,34 @@ public class FetchArenaLadderExample {
         List<ArenaTeam> teams = armory.fetchArenaLadder("US", "Bloodlust", filter);
 
         // print the results
+        System.out.println("Results");
+        System.out.println("-------");
+
         for (ArenaTeam team : teams) {
             System.out.println(
                 team.getRank() + ") " + team.getName() +
                 " (" + team.getSeasonGamesWon() + "-" + team.getSeasonGamesLost() + ") - " +
                 "Rating: " + team.getRating()
             );
+        }
+
+
+        // get the first team and display the members
+        if (teams.size() > 0) {
+            ArenaTeam team = teams.get(0);
+
+            // request the member list from the armory
+            List<ArenaTeamMember> members = armory.fetchArenaTeamMembers(team);
+
+            System.out.println("");
+            System.out.println("Members of team: " + team.getName());
+
+            for (ArenaTeamMember member : members) {
+                System.out.println("   " +
+                    member.getName() + " (" + PlayerCharacter.getClassName( member.getClassId() ) + ") - " +
+                    member.getSeasonGamesWon() + " wins, " + member.getSeasonGamesLost() + " losses"
+                );
+            }
         }
 
     }

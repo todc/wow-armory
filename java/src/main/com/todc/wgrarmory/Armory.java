@@ -263,6 +263,32 @@ public interface Armory {
             throws Exception;
 
 
-    public List<ArenaTeam> fetchArenaLadder(String regionCode, String battlegroup, ArenaFilter filter) throws Exception;
+    /**
+     * Fetch arena teams according to the filter criteria supplied.
+     *
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param battlegroup Name of battlegroup (e.g. Bloodlust, Retaliation, etc)
+     * @param filter Filter criteria. At a minimum, a ladder type (e.g. 3v3)
+     *        must be specified in the filter.
+     *
+     * @return List of matching ArenaTeam objects
+     *
+     * @throws Exception
+     */
+    public List<ArenaTeam> fetchArenaLadder(String regionCode, String battlegroup, ArenaFilter filter)
+            throws Exception;
+
+
+    /**
+     * Fetch arena team members for the given team. At a minimum, the following
+     * fields must be set on the given team: regionCode, realm, name, teamSize.
+     *
+     * @param team Arena Team object
+     *
+     * @return List of matching ArenaTeamMember objects
+     *
+     * @throws Exception
+     */
+    public List<ArenaTeamMember> fetchArenaTeamMembers(ArenaTeam team) throws Exception;
 
 }
