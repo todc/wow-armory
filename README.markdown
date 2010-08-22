@@ -2,7 +2,7 @@
 
 #### Library for parsing the World of Warcraft Armory ####
 
-*wgr-armory* is a full-featured API for accessing Blizzard's World of Warcraft Armory. It parses the resulting XML and
+**wgr-armory** is a full-featured API for accessing Blizzard's World of Warcraft Armory. It parses the resulting XML and
 converts it into plain old java objects. All regional armories are supported, including Americas, Europe, Korea, China,
 and Taiwan. Methods exist to fetch the following information:
 
@@ -15,7 +15,7 @@ and Taiwan. Methods exist to fetch the following information:
     * Statistics
     * Items
     * Arena Teams
-* Customizable character feed
+* Customizable character activity feed
 * Filterable Arena Ladders
 * Detailed Arena Team data, including:
     * Arena Team characters
