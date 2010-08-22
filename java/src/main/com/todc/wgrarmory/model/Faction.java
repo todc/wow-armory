@@ -14,6 +14,25 @@ package com.todc.wgrarmory.model;
  */
 public class Faction {
 
+
+    // -------------------------------------------------------------- Constants
+
+
+    public static final int ALLIANCE_VANGUARD = 1037;
+    public static final int ARGENT_CRUSADE = 1106;
+    public static final int ASHEN_VERDICT = 1156;
+    public static final int FRENZYHEART_TRIBE = 1103;
+    public static final int HORDE_EXPEDITION = 1052;
+    public static final int KALUAK = 1073;
+    public static final int KIRIN_TOR = 1090;
+    public static final int KNIGHTS_OF_THE_EBON_BLADE = 1098;
+    public static final int ORACLES = 1105;
+    public static final int SILVER_COVENANT = 1094;
+    public static final int SONS_OF_HODIR = 1119;
+    public static final int SUNREAVERS = 1124;
+    public static final int WYRMREST_ACCORD = 1091;
+
+
     // ----------------------------------------------------- Instance Variables
 
 
