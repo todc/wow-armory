@@ -331,5 +331,7 @@ public interface Armory {
             throws Exception;
 
 
+    public ArenaMatch fetchArenaMatchDetails(String regionCode, String battlegroup, long matchId)
+            throws Exception;
 
 }

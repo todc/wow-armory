@@ -912,6 +912,84 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch the details of the given arena match.
+     *
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param battlegroup Name of battlegroup
+     * @param matchId ID of the desired arena match
+     *
+     * @return Matching ArenaMatch object
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public ArenaMatch fetchArenaMatchDetails(String regionCode, String battlegroup, long matchId) throws Exception {
+        String armoryHost = getArmoryHost(regionCode);
+        String bg = URLEncoder.encode(battlegroup, UTF8);
+
+        String url = "http://" + armoryHost + "/arena-game.xml?rhtml=n&gid=" + matchId + "&b=" + bg;
+
+        System.out.println("url = " + url);
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+
+        ArenaMatch match = new ArenaMatch();
+
+        Element elGame = root.getChild("game");
+
+        match.setBattlgroup(elGame.getAttributeValue("battleGroup"));
+
+        long time = elGame.getAttribute("matchStartTime").getLongValue();
+        match.setDate(new Date(time));
+
+        match.setId(elGame.getAttribute("id").getLongValue());
+        match.setLadder(elGame.getAttribute("teamSize").getIntValue());
+        match.setMap(elGame.getAttributeValue("map"));
+        match.setMatchLength(elGame.getAttribute("matchLength").getIntValue());
+
+        List<Element> teams = elGame.getChildren("team");
+        for (int i=0; i<teams.size(); i++) {
+            Element elTeam = teams.get(i);
+
+            ArenaMatchTeam team = new ArenaMatchTeam();
+            team.setDeleted(elTeam.getAttribute("deleted").getBooleanValue());
+            team.setName(elTeam.getAttributeValue("name"));
+            team.setNewRating(elTeam.getAttribute("ratingNew").getIntValue());
+            team.setRealm(elTeam.getAttributeValue("realm"));
+            team.setResult(elTeam.getAttributeValue("result"));
+
+            List<ArenaMatchTeamMember> members = new ArrayList<ArenaMatchTeamMember>();
+
+            List<Element> xmlMembers = elTeam.getChildren("member");
+            for (Element elMember : xmlMembers) {
+                ArenaMatchTeamMember member = new ArenaMatchTeamMember();
+                member.setClassId(elMember.getAttribute("classId").getIntValue());
+                member.setDamageDone(elMember.getAttribute("damageDone").getIntValue());
+                member.setDamageTaken(elMember.getAttribute("damageTaken").getIntValue());
+                member.setDeleted(elMember.getAttribute("deleted").getBooleanValue());
+                member.setDied(elMember.getAttribute("died").getBooleanValue());
+                member.setGender(elMember.getAttribute("genderId").getIntValue());
+                member.setHealingDone(elMember.getAttribute("healingDone").getIntValue());
+                member.setHealingTaken(elMember.getAttribute("healingTaken").getIntValue());
+                member.setKillingBlows(elMember.getAttribute("killingBlows").getIntValue());
+                member.setName(elMember.getAttributeValue("characterName"));
+                member.setRace(elMember.getAttribute("raceId").getIntValue());
+
+                members.add(member);
+            }
+
+            team.setMembers(members);
+
+            match.addTeam(team);
+        }
+
+        return match;
+    }
+
+
     // -------------------------------------------------------- Private Methods
 
 

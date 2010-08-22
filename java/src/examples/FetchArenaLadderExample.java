@@ -110,6 +110,47 @@ public class FetchArenaLadderExample {
 
         // --------------------------------------------------------------------
         //
+        // Fetch Arena Match Details
+        //
+        // --------------------------------------------------------------------
+
+        // get one of the matches, and display its details
+        ArenaMatch matchOverview = matches.get(0);
+
+        ArenaMatch matchDetails = armory.fetchArenaMatchDetails(
+            team.getRegionCode(),
+            team.getBattlegroup(),
+            matchOverview.getId()
+        );
+
+        System.out.println("");
+        System.out.println("Arena Match Details");
+        System.out.println("-------------------");
+        System.out.println("ID:       " + matchDetails.getId());
+        System.out.println("Date:     " + matchDetails.getDate());
+        System.out.println("Map:      " + matchDetails.getMap());
+        System.out.println("Duration: " + matchDetails.getMatchLength());
+
+        List<ArenaMatchTeam> matchTeams = matchDetails.getTeams();
+
+        for (ArenaMatchTeam matchTeam : matchTeams) {
+            System.out.println("");
+            System.out.println("Team:   " + matchTeam.getName());
+            System.out.println("Result: " + matchTeam.getResult());
+
+            List<ArenaMatchTeamMember> members1 = matchTeam.getMembers();
+
+            for (ArenaMatchTeamMember member : members1) {
+                System.out.println(
+                    member.getName() + " - " + PlayerCharacter.getClassName( member.getClassId() ) + " - " +
+                    "Died? " + member.isDied() + " / Dmg Done: " + member.getDamageDone() + " / Healing Done: " + member.getHealingDone()
+                );
+            }
+        }
+
+
+        // --------------------------------------------------------------------
+        //
         // Fetch Team Opponent History
         //
         // --------------------------------------------------------------------
