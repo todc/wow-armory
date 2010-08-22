@@ -177,6 +177,112 @@ public class DefaultArmoryImpl extends AbstractArmory {
         character.setTitle(elChar.getAttributeValue("suffix"));
         character.setGuildName(elChar.getAttributeValue("guildName"));
 
+        // Fetch base stats?
+        if (fetchCharacterBaseStats) {
+            Element elCharTab = root.getChild("characterInfo").getChild("characterTab");
+
+            BaseStats stats = new BaseStats();
+
+            Element elCharBars = elCharTab.getChild("characterBars");
+            stats.setHealth(elCharBars.getChild("health").getAttribute("effective").getIntValue());
+            // todo: create alternate fields for energy, runic power, rage?
+            stats.setMana(elCharBars.getChild("secondBar").getAttribute("effective").getIntValue());
+
+            Element elBaseStats = elCharTab.getChild("baseStats");
+            stats.setStrength(elBaseStats.getChild("strength").getAttribute("effective").getIntValue());
+            stats.setAgility(elBaseStats.getChild("agility").getAttribute("effective").getIntValue());
+            stats.setStamina(elBaseStats.getChild("stamina").getAttribute("effective").getIntValue());
+            stats.setIntellect(elBaseStats.getChild("intellect").getAttribute("effective").getIntValue());
+            stats.setSpirit(elBaseStats.getChild("spirit").getAttribute("effective").getIntValue());
+
+            Element elResist = elCharTab.getChild("resistances");
+            stats.setArcaneResist(elResist.getChild("arcane").getAttribute("value").getIntValue());
+            stats.setFireResist(elResist.getChild("fire").getAttribute("value").getIntValue());
+            stats.setFrostResist(elResist.getChild("frost").getAttribute("value").getIntValue());
+            stats.setHolyResist(elResist.getChild("holy").getAttribute("value").getIntValue());
+            stats.setNatureResist(elResist.getChild("nature").getAttribute("value").getIntValue());
+            stats.setShadowResist(elResist.getChild("shadow").getAttribute("value").getIntValue());
+
+            Element elMelee = elCharTab.getChild("melee");
+            stats.setMeleeDps(elMelee.getChild("mainHandDamage").getAttribute("dps").getDoubleValue());
+            stats.setMeleeMaxDamage(elMelee.getChild("mainHandDamage").getAttribute("max").getIntValue());
+            stats.setMeleeMinDamage(elMelee.getChild("mainHandDamage").getAttribute("min").getIntValue());
+            stats.setMeleeSpeed(elMelee.getChild("mainHandDamage").getAttribute("speed").getDoubleValue());
+            stats.setMeleeHasteRating(elMelee.getChild("mainHandSpeed").getAttribute("hasteRating").getIntValue());
+            stats.setMeleeHastePercent(elMelee.getChild("mainHandSpeed").getAttribute("hastePercent").getDoubleValue());
+            stats.setMeleePower(elMelee.getChild("power").getAttribute("effective").getIntValue());
+            stats.setMeleeHitRating(elMelee.getChild("hitRating").getAttribute("value").getIntValue());
+            stats.setMeleeHitPercent(elMelee.getChild("hitRating").getAttribute("increasedHitPercent").getDoubleValue());
+            stats.setMeleePenetration(elMelee.getChild("hitRating").getAttribute("penetration").getIntValue());
+            stats.setMeleeReducedArmorPct(elMelee.getChild("hitRating").getAttribute("reducedArmorPercent").getDoubleValue());
+            stats.setMeleeCritRating(elMelee.getChild("critChance").getAttribute("rating").getIntValue());
+            stats.setMeleeCritPercent(elMelee.getChild("critChance").getAttribute("percent").getDoubleValue());
+            stats.setMeleeExpertise(elMelee.getChild("expertise").getAttribute("value").getIntValue());
+
+            Element elRanged = elCharTab.getChild("ranged");
+            stats.setRangedDps(elRanged.getChild("damage").getAttribute("dps").getDoubleValue());
+            stats.setRangedMaxDamage(elRanged.getChild("damage").getAttribute("max").getIntValue());
+            stats.setRangedMinDamage(elRanged.getChild("damage").getAttribute("min").getIntValue());
+            stats.setRangedSpeed(elRanged.getChild("damage").getAttribute("speed").getDoubleValue());
+            stats.setRangedHasteRating(elRanged.getChild("speed").getAttribute("hasteRating").getIntValue());
+            stats.setRangedHastePercent(elRanged.getChild("speed").getAttribute("hastePercent").getDoubleValue());
+            stats.setRangedPower(elRanged.getChild("power").getAttribute("effective").getIntValue());
+            stats.setRangedHitRating(elRanged.getChild("hitRating").getAttribute("value").getIntValue());
+            stats.setRangedHitPercent(elRanged.getChild("hitRating").getAttribute("increasedHitPercent").getDoubleValue());
+            stats.setRangedPenetration(elRanged.getChild("hitRating").getAttribute("penetration").getIntValue());
+            stats.setRangedReducedArmorPct(elRanged.getChild("hitRating").getAttribute("reducedArmorPercent").getDoubleValue());
+            stats.setRangedCritRating(elRanged.getChild("critChance").getAttribute("rating").getIntValue());
+            stats.setRangedCritPercent(elRanged.getChild("critChance").getAttribute("percent").getDoubleValue());
+
+            Element elSpell = elCharTab.getChild("spell");
+
+            List<Element> xmlSpellDmg = elSpell.getChild("bonusDamage").getChildren();
+            int spellDmg = 0;
+            for (Element elDmg : xmlSpellDmg) {
+                if (elDmg.getAttribute("value") != null) {
+                    int val = elDmg.getAttribute("value").getIntValue();
+                    spellDmg = (val > spellDmg) ? val : spellDmg;
+                }
+            }
+            stats.setSpellDamage(spellDmg);
+            
+            stats.setSpellHealing(elSpell.getChild("bonusHealing").getAttribute("value").getIntValue());
+            stats.setSpellHasteRating(elSpell.getChild("hasteRating").getAttribute("hasteRating").getIntValue());
+            stats.setSpellHastePercent(elSpell.getChild("hasteRating").getAttribute("hastePercent").getDoubleValue());
+            stats.setSpellHitRating(elSpell.getChild("hitRating").getAttribute("value").getIntValue());
+            stats.setSpellHitPercent(elSpell.getChild("hitRating").getAttribute("increasedHitPercent").getDoubleValue());
+            stats.setSpellPenetration(elSpell.getChild("penetration").getAttribute("value").getIntValue());
+            stats.setSpellCritRating(elSpell.getChild("critChance").getAttribute("rating").getIntValue());
+
+            List<Element> xmlSpellCrit = elSpell.getChild("critChance").getChildren();
+            double spellCrit = 0;
+            for (Element elCrit : xmlSpellCrit) {
+                double val = elCrit.getAttribute("percent").getDoubleValue();
+                spellCrit = (val > spellCrit) ? val : spellCrit;
+            }
+            stats.setSpellCritPercent(spellCrit);
+
+            stats.setMp5Casting(elSpell.getChild("manaRegen").getAttribute("casting").getDoubleValue());
+            stats.setMp5NotCasting(elSpell.getChild("manaRegen").getAttribute("notCasting").getDoubleValue());
+
+
+            Element elDefenses = elCharTab.getChild("defenses");
+            stats.setArmor(elDefenses.getChild("armor").getAttribute("effective").getIntValue());
+            stats.setDefense(
+                (int)elDefenses.getChild("defense").getAttribute("value").getDoubleValue() +
+                elDefenses.getChild("defense").getAttribute("plusDefense").getIntValue()
+            );
+            stats.setDodgeRating(elDefenses.getChild("dodge").getAttribute("rating").getIntValue());
+            stats.setDodgePercent(elDefenses.getChild("dodge").getAttribute("percent").getDoubleValue());
+            stats.setParryRating(elDefenses.getChild("parry").getAttribute("rating").getIntValue());
+            stats.setParryPercent(elDefenses.getChild("parry").getAttribute("percent").getDoubleValue());
+            stats.setBlockRating(elDefenses.getChild("block").getAttribute("rating").getIntValue());
+            stats.setBlockPercent(elDefenses.getChild("block").getAttribute("percent").getDoubleValue());
+            stats.setResilience((int)elDefenses.getChild("resilience").getAttribute("value").getDoubleValue());
+
+            character.setBaseStats(stats);
+        }
+
         // Fetch arena team info?
         if (fetchCharacterArenaTeams) {
             List<Element> xmlArenaTeams = root.getChild("characterInfo")

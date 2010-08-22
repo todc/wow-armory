@@ -99,6 +99,8 @@ public class PlayerCharacter {
 
     private int m_achievementPoints;
 
+    private BaseStats m_baseStats;
+
     private List<TalentSpec> m_talentSpecs = new ArrayList<TalentSpec>();
     private List<Profession> m_professions = new ArrayList<Profession>();
     private List<Profession> m_secondaryProfessions = new ArrayList<Profession>();
@@ -261,6 +263,14 @@ public class PlayerCharacter {
         m_arenaTeams = arenaTeams;
     }
 
+    public BaseStats getBaseStats() {
+        return m_baseStats;
+    }
+
+    public void setBaseStats(BaseStats baseStats) {
+        m_baseStats = baseStats;
+    }
+    
 
     // --------------------------------------------------------- Public Methods
 

@@ -54,6 +54,11 @@ public class FetchCharacterExample {
 
 
         System.out.println("");
+        System.out.println("Base Stats");
+        System.out.println("----------");
+        System.out.println(player.getBaseStats());
+
+        System.out.println("");
         System.out.println("Talent Specs");
         System.out.println("------------");
 

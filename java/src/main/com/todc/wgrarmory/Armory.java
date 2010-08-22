@@ -104,6 +104,24 @@ public interface Armory {
     public void setFetchCharacterItems(boolean val);
     public boolean isFetchCharacterItems();
 
+    /**
+     * Specify whether to parse and populate a character's arena teams during
+     * <code>fetchCharacter</code>. Defaults to true.
+     *
+     * @param val False to skip character arena teams, True to retrieve them
+     */
+    public void setFetchCharacterArenaTeams(boolean val);
+    public boolean isFetchCharacterArenaTeams();
+
+    /**
+     * Specify whether to parse and populate a character's base stats during
+     * <code>fetchCharacter</code>. Defaults to true.
+     *
+     * @param val False to skip character base stats, True to retrieve them
+     */
+    public void setFetchCharacterBaseStats(boolean val);
+    public boolean isFetchCharacterBaseStats();
+
 
     /**
      * Retrieve guild info, including roster, from the Armory. Performs HTTP
