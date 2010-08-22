@@ -10,7 +10,7 @@ package com.todc.wgrarmory.model;
 
 
 /**
- * @author Tim O'Donnell
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class Faction {
 

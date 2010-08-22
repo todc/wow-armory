@@ -15,7 +15,9 @@ import java.util.List;
 
 
 /**
- *
+ * Models a single Arena Match. It is returned by
+ * {@link com.todc.wgrarmory.Armory#fetchArenaMatchDetails}
+ * and {@link com.todc.wgrarmory.Armory#fetchArenaTeamMatchHistory}.
  *
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
@@ -31,7 +33,7 @@ public class ArenaMatch {
     private int m_newRating;
     private Date m_date;
 
-    private String m_battlgroup;
+    private String m_battlegroup;
     private String m_map;
     private int m_matchLength;
 
@@ -83,12 +85,12 @@ public class ArenaMatch {
         m_date = date;
     }
 
-    public String getBattlgroup() {
-        return m_battlgroup;
+    public String getBattlegroup() {
+        return m_battlegroup;
     }
 
-    public void setBattlgroup(String battlgroup) {
-        m_battlgroup = battlgroup;
+    public void setBattlegroup(String battlegroup) {
+        m_battlegroup = battlegroup;
     }
 
     public String getMap() {
@@ -133,5 +135,32 @@ public class ArenaMatch {
         }
 
         m_teams.add(team);
+    }
+
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("[");
+        sb.append("battlegroup = " + m_battlegroup + "; ");
+        sb.append("date = " + m_date + "; ");
+        sb.append("deleted = " + m_deleted + "; ");
+        sb.append("id = " + m_id + "; ");
+        sb.append("ladder = " + m_ladder + "; ");
+        sb.append("map = " + m_map + "; ");
+        sb.append("matchLength = " + m_matchLength + "; ");
+        sb.append("newRating = " + m_newRating + "; ");
+        sb.append("otherTeamName = " + m_otherTeamName + "; ");
+        sb.append("teams = ");
+
+        if (m_teams == null) {
+            sb.append("null");
+        } else {
+            sb.append("[");
+            for (ArenaMatchTeam t : m_teams) {
+                sb.append(t + ", ");
+            }
+            sb.append("]");
+        }
+
+        return sb.toString();
     }
 }

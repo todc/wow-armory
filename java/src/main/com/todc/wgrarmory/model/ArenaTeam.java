@@ -10,7 +10,10 @@ package com.todc.wgrarmory.model;
 
 
 /**
- * @author <a href="tim@timodonnell.com">Tim O'Donnell</a>
+ * Models the high-level details of an arena team, as returned from
+ * {@link com.todc.wgrarmory.Armory#fetchArenaLadder}.
+ *
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class ArenaTeam {
 
@@ -173,16 +176,17 @@ public class ArenaTeam {
 
     public String toString() {
         StringBuffer sb = new StringBuffer("[");
-        sb.append("rank = " + m_rank + "; ");
-        sb.append("name = " + m_name + "; ");
         sb.append("battlegroup = " + m_battlegroup + "; ");
-        sb.append("realm = " + m_realm + "; ");
         sb.append("created = " + m_created + "; ");
         sb.append("faction = " + m_faction + "; ");
         sb.append("gamesPlayed = " + m_gamesPlayed + "; ");
         sb.append("gamesWon = " + m_gamesWon + "; ");
         sb.append("lastSeasonRank = " + m_lastSeasonRank + "; ");
+        sb.append("name = " + m_name + "; ");
+        sb.append("rank = " + m_rank + "; ");
         sb.append("rating = " + m_rating + "; ");
+        sb.append("realm = " + m_realm + "; ");
+        sb.append("regionCode = " + m_regionCode + "; ");
         sb.append("seasonGamesPlayed = " + m_seasonGamesPlayed + "; ");
         sb.append("seasonGamesWon = " + m_seasonGamesWon + "; ");
         sb.append("size = " + m_size + "; ");

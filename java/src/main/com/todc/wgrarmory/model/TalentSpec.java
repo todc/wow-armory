@@ -14,7 +14,7 @@ import java.util.List;
 
 
 /**
- * @author <a href="mailto:odonnellt@gmail.com">Tim O'Donnell</a>
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class TalentSpec {
 

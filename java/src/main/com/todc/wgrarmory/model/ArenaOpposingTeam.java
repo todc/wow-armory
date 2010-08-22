@@ -10,9 +10,10 @@ package com.todc.wgrarmory.model;
 
 
 /**
- * 
+ * Models the win-loss stastics against a particular arena team. Returned from
+ * {@link com.todc.wgrarmory.Armory#fetchArenaTeamOpponentHistory}.
  *
- * @author <a href="mailto:odonnellt@gmail.com">Tim O'Donnell</a>
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class ArenaOpposingTeam {
 
@@ -104,5 +105,24 @@ public class ArenaOpposingTeam {
 
     public void setTeamName(String teamName) {
         m_teamName = teamName;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("[");
+        sb.append("deleted = " + m_deleted + "; ");
+        sb.append("games = " + m_games + "; ");
+        sb.append("losses = " + m_losses + "; ");
+        sb.append("mla = " + m_mla + "; ");
+        sb.append("ratingDelta = " + m_ratingDelta + "; ");
+        sb.append("realm = " + m_realm + "; ");
+        sb.append("teamName = " + m_teamName + "; ");
+        sb.append("winPct = " + m_winPct + "; ");
+        sb.append("wins = " + m_wins + "; ");
+
+        return sb.toString();
     }
 }

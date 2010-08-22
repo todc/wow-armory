@@ -15,6 +15,8 @@ import java.util.List;
 
 
 /**
+ * Models the criteria with which to filter a character's activity feed.
+ *
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class FeedFilter {

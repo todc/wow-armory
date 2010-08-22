@@ -264,7 +264,8 @@ public interface Armory {
 
 
     /**
-     * Fetch arena teams according to the filter criteria supplied.
+     * Fetch arena teams according to the filter criteria supplied. Sends a
+     * request to the armory URL arena-ladder.xml.
      *
      * @param regionCode Region code (e.g. US, EU, etc)
      * @param battlegroup Name of battlegroup (e.g. Bloodlust, Retaliation, etc)
@@ -280,10 +281,11 @@ public interface Armory {
 
 
     /**
-     * Fetch arena team members for the given team.
+     * Fetch arena team members for the given team. Sends a request to the
+     * armory URL team-info.xml.
      *
      * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
-     *        ArenaFilter
+     *        {@link ArenaFilter}
      * @param regionCode Region code (e.g. US, EU, etc)
      * @param realmName Name of realm
      * @param teamName Name of arena team
@@ -297,10 +299,11 @@ public interface Armory {
 
 
     /**
-     * Fetch arena matches for the given team.
+     * Fetch arena matches for the given team. Sends a request to the armory
+     * URL arena-team-game-chart.xml.
      *
      * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
-     *        ArenaFilter
+     *        {@link ArenaFilter}
      * @param regionCode Region code (e.g. US, EU, etc)
      * @param realmName Name of realm
      * @param teamName Name of arena team
@@ -314,10 +317,11 @@ public interface Armory {
 
 
     /**
-     * Fetch opponent history for the given team.
+     * Fetch opponent history for the given team. Sends a request to the armory
+     * URL arena-team-report-opposing-teams.xml.
      *
      * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
-     *        ArenaFilter
+     *        {@link ArenaFilter}
      * @param regionCode Region code (e.g. US, EU, etc)
      * @param realmName Name of realm
      * @param teamName Name of arena team
@@ -331,6 +335,18 @@ public interface Armory {
             throws Exception;
 
 
+    /**
+     * Returns the details of the given arena match. Performs a request to
+     * the armory URL arena-game.xml.
+     *
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param battlegroup Battlegroup name
+     * @param matchId ID of arena match
+     *
+     * @return Matching ArenaMatch object
+     *
+     * @throws Exception
+     */
     public ArenaMatch fetchArenaMatchDetails(String regionCode, String battlegroup, long matchId)
             throws Exception;
 

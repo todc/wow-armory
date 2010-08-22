@@ -274,6 +274,8 @@ public class DefaultArmoryImpl extends AbstractArmory {
      * Fetch character achievements for the given top-level category (e.g.
      * Dungeons and Raids = 168).
      *
+     * Sends a request to the armory URL character-achievements.xml.
+     *
      * @param charName Name of character
      * @param realmName Name of realm
      * @param regionCode Region code (e.g. US, EU, etc)
@@ -295,6 +297,8 @@ public class DefaultArmoryImpl extends AbstractArmory {
      * Fetch character achievements for the given top-level category (e.g.
      * Dungeons and Raids = 168). Optionally limit fetch to only specific
      * sub-categories.
+     *
+     * Sends a request to the armory URL character-achievements.xml.
      *
      * @param charName Name of character
      * @param realmName Name of realm
@@ -676,7 +680,8 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
 
     /**
-     * Fetch arena teams according to the filter criteria supplied.
+     * Fetch arena teams according to the filter criteria supplied. Sends a
+     * request to the armory URL arena-ladder.xml.
      *
      * @param regionCode Region code (e.g. US, EU, etc)
      * @param battlegroup Name of battlegroup (e.g. Bloodlust, Retaliation, etc)
@@ -746,10 +751,11 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
 
     /**
-     * Fetch arena team members for the given team.
+     * Fetch arena team members for the given team. Sends a request to the
+     * armory URL team-info.xml.
      *
      * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
-     *        ArenaFilter
+     *        {@link ArenaFilter}
      * @param regionCode Region code (e.g. US, EU, etc)
      * @param realmName Name of realm
      * @param teamName Name of arena team
@@ -807,10 +813,11 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
 
     /**
-     * Fetch arena matches for the given team.
+     * Fetch arena matches for the given team. Sends a request to the armory
+     * URL arena-team-game-chart.xml.
      *
      * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
-     *        ArenaFilter
+     *        {@link ArenaFilter}
      * @param regionCode Region code (e.g. US, EU, etc)
      * @param realmName Name of realm
      * @param teamName Name of arena team
@@ -842,7 +849,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
         for (Element elGame : xmlGames) {
             ArenaMatch match = new ArenaMatch();
 
-            match.setBattlgroup(root.getChild("gameListingChart").getChild("arenaTeam").getAttributeValue("battleGroup"));
+            match.setBattlegroup(root.getChild("gameListingChart").getChild("arenaTeam").getAttributeValue("battleGroup"));
 
             long time = elGame.getAttribute("st").getLongValue();
             match.setDate(new Date(time));
@@ -860,10 +867,11 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
 
     /**
-     * Fetch opponent history for the given team.
+     * Fetch opponent history for the given team. Sends a request to the armory
+     * URL arena-team-report-opposing-teams.xml.
      *
      * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
-     *        ArenaFilter
+     *        {@link ArenaFilter}
      * @param regionCode Region code (e.g. US, EU, etc)
      * @param realmName Name of realm
      * @param teamName Name of arena team
@@ -913,11 +921,12 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
 
     /**
-     * Fetch the details of the given arena match.
+     * Returns the details of the given arena match. Performs a request to
+     * the armory URL <code>arena-game.xml</code>.
      *
      * @param regionCode Region code (e.g. US, EU, etc)
-     * @param battlegroup Name of battlegroup
-     * @param matchId ID of the desired arena match
+     * @param battlegroup Battlegroup name
+     * @param matchId ID of arena match
      *
      * @return Matching ArenaMatch object
      *
@@ -940,7 +949,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
         Element elGame = root.getChild("game");
 
-        match.setBattlgroup(elGame.getAttributeValue("battleGroup"));
+        match.setBattlegroup(elGame.getAttributeValue("battleGroup"));
 
         long time = elGame.getAttribute("matchStartTime").getLongValue();
         match.setDate(new Date(time));
@@ -951,15 +960,14 @@ public class DefaultArmoryImpl extends AbstractArmory {
         match.setMatchLength(elGame.getAttribute("matchLength").getIntValue());
 
         List<Element> teams = elGame.getChildren("team");
-        for (int i=0; i<teams.size(); i++) {
-            Element elTeam = teams.get(i);
-
+        for (Element elTeam : teams) {
             ArenaMatchTeam team = new ArenaMatchTeam();
             team.setDeleted(elTeam.getAttribute("deleted").getBooleanValue());
             team.setName(elTeam.getAttributeValue("name"));
             team.setNewRating(elTeam.getAttribute("ratingNew").getIntValue());
             team.setRealm(elTeam.getAttributeValue("realm"));
             team.setResult(elTeam.getAttributeValue("result"));
+            team.setRatingDelta(elTeam.getAttribute("ratingDelta").getIntValue());
 
             List<ArenaMatchTeamMember> members = new ArrayList<ArenaMatchTeamMember>();
 
@@ -1115,13 +1123,10 @@ public class DefaultArmoryImpl extends AbstractArmory {
      * The armory will return a 200 response if the character doesn't
      * exist, but the response body will look like this:
      *
-     * <pre>
-     * <?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="/_layout/character/sheet.xsl"?>
-     * <page globalSearch="1" lang="en_us" requestUrl="/character-sheet.xml">
-     *   <tabInfo subTab="profile" tab="character" tabGroup="character" tabUrl=""/>
-     *   <characterInfo errCode="noCharacter"/>
-     * </page>
-     * </pre>
+     * &lt;page globalSearch="1" lang="en_us" requestUrl="/character-sheet.xml"&gt;
+     *   &lt;tabInfo subTab="profile" tab="character" tabGroup="character" tabUrl=""/&gt;
+     *   &lt;characterInfo errCode="noCharacter"/&gt;
+     * &lt;/page&gt;
      *
      * Check for the "errCode" attribute, and throw an appropriate
      * exception.

@@ -13,6 +13,9 @@ import java.util.List;
 
 
 /**
+ * Models an arena team for a specific arena match. Returned by
+ * {@link com.todc.wgrarmory.Armory#fetchArenaMatchDetails}.
+ *
  * @author <a href="mailto:odonnellt@gmail.com">Tim O'Donnell</a>
  */
 public class ArenaMatchTeam {
@@ -74,11 +77,48 @@ public class ArenaMatchTeam {
         m_result = result;
     }
 
+    public int getRatingDelta() {
+        return m_ratingDelta;
+    }
+
+    public void setRatingDelta(int ratingDelta) {
+        m_ratingDelta = ratingDelta;
+    }
+
     public List<ArenaMatchTeamMember> getMembers() {
         return m_members;
     }
 
     public void setMembers(List<ArenaMatchTeamMember> members) {
         m_members = members;
+    }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("[");
+        sb.append("deleted = " + m_deleted + "; ");
+        sb.append("name = " + m_name + "; ");
+        sb.append("newRating = " + m_newRating + "; ");
+        sb.append("ratingDelta = " + m_ratingDelta + "; ");
+        sb.append("realm = " + m_realm + "; ");
+        sb.append("result = " + m_result + "; ");
+        sb.append("members = ");
+
+        if (m_members == null) {
+            sb.append("null");
+        } else {
+            sb.append("[");
+            for (ArenaMatchTeamMember m : m_members) {
+                sb.append(m + ", ");
+            }
+            sb.append("]");
+        }
+
+        sb.append("]");
+
+        return sb.toString();
     }
 }

@@ -10,9 +10,18 @@ package com.todc.wgrarmory.model;
 
 
 /**
- * @author <a href="mailto:odonnellt@gmail.com">Tim O'Donnell</a>
+ * Models an arena team's character and its playing stats from a particular
+ * arena match. Returned as part of a {@link ArenaMatchTeam} object from
+ * {@link com.todc.wgrarmory.Armory#fetchArenaMatchDetails}.
+ *
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class ArenaMatchTeamMember {
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
     private String m_name;
     private int m_classId;
     private int m_damageDone;
@@ -24,6 +33,10 @@ public class ArenaMatchTeamMember {
     private int m_healingTaken;
     private int m_killingBlows;
     private int m_race;
+
+
+    // ------------------------------------------------------ Getters / Setters
+
 
     public String getName() {
         return m_name;
@@ -112,4 +125,26 @@ public class ArenaMatchTeamMember {
     public void setRace(int race) {
         m_race = race;
     }
+
+
+    // --------------------------------------------------------- Public Methods
+
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("[");
+        sb.append("name = " + m_name + "; ");
+        sb.append("classId = " + m_classId + "; ");
+        sb.append("damageDone = " + m_damageDone + "; ");
+        sb.append("damageTaken = " + m_damageTaken + "; ");
+        sb.append("deleted = " + m_deleted + "; ");
+        sb.append("died = " + m_died + "; ");
+        sb.append("gender = " + m_gender + "; ");
+        sb.append("healingDone = " + m_healingDone + "; ");
+        sb.append("healingTaken = " + m_healingTaken + "; ");
+        sb.append("killingBlows = " + m_killingBlows + "; ");
+        sb.append("race = " + m_race);
+
+        return sb.toString();
+    }
+
 }

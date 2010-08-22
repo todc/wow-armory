@@ -13,6 +13,9 @@ import java.util.Date;
 
 
 /**
+ * Models an entry in a character's activity feed. Returned from
+ * {@link com.todc.wgrarmory.Armory#fetchCharacterFeed}.
+ *
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class FeedEntry {

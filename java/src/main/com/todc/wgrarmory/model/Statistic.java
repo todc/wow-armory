@@ -10,7 +10,10 @@ package com.todc.wgrarmory.model;
 
 
 /**
- * @author Tim O'Donnell
+ * Models a single character statistic. Used by
+ * <code>Armory.fetchCharacterStatistics</code>.
+ *
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class Statistic {
 

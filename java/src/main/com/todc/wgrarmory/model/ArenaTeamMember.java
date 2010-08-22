@@ -10,7 +10,10 @@ package com.todc.wgrarmory.model;
 
 
 /**
- * @author Tim O'Donnell
+ * Models the statistics of a particular arena team's member. Returned from
+ * {@link com.todc.wgrarmory.Armory#fetchArenaTeamMembers}.
+ *
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class ArenaTeamMember {
 
@@ -19,7 +22,7 @@ public class ArenaTeamMember {
 
 
     private String m_battlegroup;
-    private String regionCode;
+    private String m_regionCode;
     private String m_realm;
     private String m_guildName;
     private long m_guildId;
@@ -47,11 +50,11 @@ public class ArenaTeamMember {
     }
 
     public String getRegionCode() {
-        return regionCode;
+        return m_regionCode;
     }
 
     public void setRegionCode(String regionCode) {
-        this.regionCode = regionCode;
+        this.m_regionCode = regionCode;
     }
 
     public String getRealm() {
@@ -164,6 +167,29 @@ public class ArenaTeamMember {
 
     public int getSeasonGamesLost() {
         return m_seasonGamesPlayed - m_seasonGamesWon;
+    }
+
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("[");
+        sb.append("battlegroup = " + m_battlegroup + "; ");
+        sb.append("classId = " + m_classId + "; ");
+        sb.append("contribution = " + m_contribution + "; ");
+        sb.append("gamesPlayed = " + m_gamesPlayed + "; ");
+        sb.append("gamesWon = " + m_gamesWon + "; ");
+        sb.append("genderId = " + m_genderId + "; ");
+        sb.append("guildId = " + m_guildId + "; ");
+        sb.append("guildName = " + m_guildName + "; ");
+        sb.append("name = " + m_name + "; ");
+        sb.append("raceId = " + m_raceId + "; ");
+        sb.append("realm = " + m_realm + "; ");
+        sb.append("regionCode = " + m_regionCode + "; ");
+        sb.append("seasonGamesPlayed = " + m_seasonGamesPlayed + "; ");
+        sb.append("seasonGamesWon = " + m_seasonGamesWon + "; ");
+        sb.append("teamRank = " + m_teamRank);
+        sb.append("]");
+
+        return sb.toString();
     }
 
 }

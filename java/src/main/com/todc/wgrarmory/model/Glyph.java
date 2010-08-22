@@ -10,7 +10,7 @@ package com.todc.wgrarmory.model;
 
 
 /**
- * @author <a href="tim@timodonnell.com">Tim O'Donnell</a>
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public class Glyph {
 

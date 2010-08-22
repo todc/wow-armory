@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * @author <a href="mailto:odonnellt@gmail.com">Tim O'Donnell</a>
+ * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
 public abstract class AbstractArmory implements Armory {
 
