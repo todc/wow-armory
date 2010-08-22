@@ -15,12 +15,13 @@ wgr-armory
     * Items
     * Arena Teams
 * Customizable character activity feed
-* Filterable Arena Ladders
+* Sortable and paginated Arena Ladders
 * Detailed Arena Team data, including:
     * Arena Team characters
     * Arena Team match history
     * Arena Team opponent history
 * Individual arena match stats
+* Comprehensive item search. All filters supported.
 
 The first version of this library is written in Java. The goal is to eventually port it to several other languages, including PHP, Ruby, and Python. 
 
