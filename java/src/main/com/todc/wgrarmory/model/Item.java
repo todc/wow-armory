@@ -20,8 +20,14 @@ public class Item {
 
     private int m_id;
     private String m_name;
-    private int m_slot;
     private int m_rarity;
+    private int m_itemLevel;
+    private int m_areaId;
+    private String m_areaKey;
+    private int m_creatureId;
+    private String m_difficulty;
+
+    private int m_slot;
     private int m_gem0Id;
     private int m_gem1Id;
     private int m_gem2Id;
@@ -100,6 +106,46 @@ public class Item {
 
     public void setEnchantId(int enchantId) {
         m_enchantId = enchantId;
+    }
+
+    public int getItemLevel() {
+        return m_itemLevel;
+    }
+
+    public void setItemLevel(int itemLevel) {
+        m_itemLevel = itemLevel;
+    }
+
+    public int getAreaId() {
+        return m_areaId;
+    }
+
+    public void setAreaId(int areaId) {
+        m_areaId = areaId;
+    }
+
+    public String getAreaKey() {
+        return m_areaKey;
+    }
+
+    public void setAreaKey(String areaKey) {
+        m_areaKey = areaKey;
+    }
+
+    public int getCreatureId() {
+        return m_creatureId;
+    }
+
+    public void setCreatureId(int creatureId) {
+        m_creatureId = creatureId;
+    }
+
+    public String getDifficulty() {
+        return m_difficulty;
+    }
+
+    public void setDifficulty(String difficulty) {
+        m_difficulty = difficulty;
     }
 
 
