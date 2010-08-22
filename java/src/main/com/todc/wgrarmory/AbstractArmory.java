@@ -48,6 +48,7 @@ public abstract class AbstractArmory implements Armory {
     protected boolean fetchCharacterTalents = true;
     protected boolean fetchCharacterProfessions = true;
     protected boolean fetchCharacterItems = true;
+    protected boolean fetchCharacterArenaTeams = true;
 
     private Proxy m_proxy;
 
@@ -141,7 +142,15 @@ public abstract class AbstractArmory implements Armory {
         this.fetchCharacterItems = fetchCharacterItems;
     }
 
-    
+    public boolean isFetchCharacterArenaTeams() {
+        return fetchCharacterArenaTeams;
+    }
+
+    public void setFetchCharacterArenaTeams(boolean fetchCharacterArenaTeams) {
+        this.fetchCharacterArenaTeams = fetchCharacterArenaTeams;
+    }
+
+
     // ------------------------------------------------------ Protected Methods
 
 

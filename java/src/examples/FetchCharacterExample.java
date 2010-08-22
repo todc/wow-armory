@@ -94,6 +94,21 @@ public class FetchCharacterExample {
 
 
         System.out.println("");
+        System.out.println("Arena Teams");
+        System.out.println("-----------");
+
+        List<ArenaTeam> arenaTeams = player.getArenaTeams();
+        for (ArenaTeam team : arenaTeams) {
+            System.out.println(team.getName() + " / Rating: " + team.getRating() + " / " + team.getSeasonGamesWon() + "W - " + team.getSeasonGamesLost() + "L");
+
+            List<ArenaTeamMember> members = team.getTeamMembers();
+            for (ArenaTeamMember member : members) {
+                System.out.println("   " + member.getName() + " - " + PlayerCharacter.getClassName( member.getClassId() ));
+            }
+        }
+
+
+        System.out.println("");
         System.out.println("Items");
         System.out.println("-----");
 

@@ -100,11 +100,10 @@ public class PlayerCharacter {
     private int m_achievementPoints;
 
     private List<TalentSpec> m_talentSpecs = new ArrayList<TalentSpec>();
-
     private List<Profession> m_professions = new ArrayList<Profession>();
     private List<Profession> m_secondaryProfessions = new ArrayList<Profession>();
-
     private List<Item> m_items = new ArrayList<Item>();
+    private List<ArenaTeam> m_arenaTeams = new ArrayList<ArenaTeam>();
 
 
     // ------------------------------------------------------ Getters / Setters
@@ -254,6 +253,14 @@ public class PlayerCharacter {
         m_items = items;
     }
 
+    public List<ArenaTeam> getArenaTeams() {
+        return m_arenaTeams;
+    }
+
+    public void setArenaTeams(List<ArenaTeam> arenaTeams) {
+        m_arenaTeams = arenaTeams;
+    }
+
 
     // --------------------------------------------------------- Public Methods
 
@@ -292,6 +299,10 @@ public class PlayerCharacter {
 
     public void addItem(Item item) {
         m_items.add(item);
+    }
+
+    public void addArenaTeam(ArenaTeam team) {
+        m_arenaTeams.add(team);
     }
 
 

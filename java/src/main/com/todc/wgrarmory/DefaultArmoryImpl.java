@@ -177,6 +177,60 @@ public class DefaultArmoryImpl extends AbstractArmory {
         character.setTitle(elChar.getAttributeValue("suffix"));
         character.setGuildName(elChar.getAttributeValue("guildName"));
 
+        // Fetch arena team info?
+        if (fetchCharacterArenaTeams) {
+            List<Element> xmlArenaTeams = root.getChild("characterInfo")
+                                              .getChild("character")
+                                              .getChild("arenaTeams")
+                                              .getChildren("arenaTeam");
+
+            for (Element elTeam : xmlArenaTeams) {
+                ArenaTeam team = new ArenaTeam();
+                team.setBattlegroup(elTeam.getAttributeValue("battleGroup"));
+
+                long time = elTeam.getAttribute("created").getLongValue();
+                team.setCreated(new Date(time));
+                team.setFaction(elTeam.getAttribute("factionId").getIntValue());
+                team.setGamesPlayed(elTeam.getAttribute("gamesPlayed").getIntValue());
+                team.setGamesWon(elTeam.getAttribute("gamesWon").getIntValue());
+                team.setLastSeasonRank(elTeam.getAttribute("lastSeasonRanking").getIntValue());
+                team.setName(elTeam.getAttributeValue("name"));
+                team.setRank(elTeam.getAttribute("ranking").getIntValue());
+                team.setRating(elTeam.getAttribute("rating").getIntValue());
+                team.setRealm(elTeam.getAttributeValue("realm"));
+                team.setRegionCode(regionCode.toUpperCase());
+                team.setSeasonGamesPlayed(elTeam.getAttribute("seasonGamesPlayed").getIntValue());
+                team.setSeasonGamesWon(elTeam.getAttribute("seasonGamesWon").getIntValue());
+                team.setSize(elTeam.getAttribute("size").getIntValue());
+                team.setTeamSize(elTeam.getAttribute("teamSize").getIntValue());
+
+                // get team members
+                List<Element> xmlMembers = elTeam.getChild("members").getChildren("character");
+                for (Element elMember : xmlMembers) {
+                    ArenaTeamMember member = new ArenaTeamMember();
+                    member.setBattlegroup(elMember.getAttributeValue("battleGroup"));
+                    member.setClassId(elMember.getAttribute("classId").getIntValue());
+                    member.setContribution(elMember.getAttribute("contribution").getIntValue());
+                    member.setGamesPlayed(elMember.getAttribute("gamesPlayed").getIntValue());
+                    member.setGamesWon(elMember.getAttribute("gamesWon").getIntValue());
+                    member.setGenderId(elMember.getAttribute("genderId").getIntValue());
+                    member.setGuildId(elMember.getAttribute("guildId").getLongValue());
+                    member.setGuildName(elMember.getAttributeValue("guild"));
+                    member.setName(elMember.getAttributeValue("name"));
+                    member.setRaceId(elMember.getAttribute("raceId").getIntValue());
+                    member.setRealm(character.getRealm());
+                    member.setRegionCode(regionCode.toUpperCase());
+                    member.setSeasonGamesPlayed(elMember.getAttribute("seasonGamesPlayed").getIntValue());
+                    member.setSeasonGamesWon(elMember.getAttribute("seasonGamesWon").getIntValue());
+                    member.setTeamRank(elMember.getAttribute("teamRank").getIntValue());
+
+                    team.addTeamMember(member);
+                }
+
+                character.addArenaTeam(team);
+            }
+        }
+
         // Fetch talents?
         if (fetchCharacterTalents) {
             Element elTalentSpecs = root.getChild("characterInfo").getChild("characterTab").getChild("talentSpecs");
@@ -728,7 +782,9 @@ public class DefaultArmoryImpl extends AbstractArmory {
             ArenaTeam team = new ArenaTeam();
 
             team.setBattlegroup(elTeam.getAttributeValue("battleGroup"));
-            team.setCreated(elTeam.getAttribute("created").getLongValue());
+
+            long time = elTeam.getAttribute("created").getLongValue();
+            team.setCreated(new Date(time));
             team.setFaction(elTeam.getAttribute("factionId").getIntValue());
             team.setGamesPlayed(elTeam.getAttribute("gamesPlayed").getIntValue());
             team.setGamesWon(elTeam.getAttribute("gamesWon").getIntValue());

@@ -9,9 +9,16 @@
 package com.todc.wgrarmory.model;
 
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+
 /**
  * Models the high-level details of an arena team, as returned from
- * {@link com.todc.wgrarmory.Armory#fetchArenaLadder}.
+ * {@link com.todc.wgrarmory.Armory#fetchArenaLadder}, as well as
+ * part of the <code>PlayerCharacter</code> object return from
+ * <code>fetchCharacter</code>.
  *
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
@@ -26,7 +33,7 @@ public class ArenaTeam {
     private String m_name;
     private String m_battlegroup;
     private String m_realm;
-    private long m_created;
+    private Date m_created;
     private int m_faction;
     private int m_gamesPlayed;
     private int m_gamesWon;
@@ -36,6 +43,8 @@ public class ArenaTeam {
     private int m_seasonGamesWon;
     private int m_size;
     private int m_teamSize;
+
+    private List<ArenaTeamMember> m_teamMembers;
 
 
     // ------------------------------------------------------ Getters / Setters
@@ -81,11 +90,11 @@ public class ArenaTeam {
         m_realm = realm;
     }
 
-    public long getCreated() {
+    public Date getCreated() {
         return m_created;
     }
 
-    public void setCreated(long created) {
+    public void setCreated(Date created) {
         m_created = created;
     }
 
@@ -161,6 +170,14 @@ public class ArenaTeam {
         m_teamSize = teamSize;
     }
 
+    public List<ArenaTeamMember> getTeamMembers() {
+        return m_teamMembers;
+    }
+
+    public void setTeamMembers(List<ArenaTeamMember> teamMembers) {
+        m_teamMembers = teamMembers;
+    }
+
 
     // --------------------------------------------------------- Public Methods
 
@@ -171,6 +188,14 @@ public class ArenaTeam {
 
     public int getSeasonGamesLost() {
         return m_seasonGamesPlayed - m_seasonGamesWon;
+    }
+
+    public void addTeamMember(ArenaTeamMember member) {
+        if (m_teamMembers == null) {
+            m_teamMembers = new ArrayList<ArenaTeamMember>();
+        }
+
+        m_teamMembers.add(member);
     }
 
 

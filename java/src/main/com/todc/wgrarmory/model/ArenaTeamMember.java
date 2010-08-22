@@ -11,7 +11,9 @@ package com.todc.wgrarmory.model;
 
 /**
  * Models the statistics of a particular arena team's member. Returned from
- * {@link com.todc.wgrarmory.Armory#fetchArenaTeamMembers}.
+ * {@link com.todc.wgrarmory.Armory#fetchArenaTeamMembers}, as well as
+ * part of the <code>PlayerCharacter</code> object return from
+ * <code>fetchCharacter</code>.
  *
  * @author <a href="mailto:tim@timodonnell.com">Tim O'Donnell</a>
  */
