@@ -107,6 +107,29 @@ public class FetchArenaLadderExample {
             System.out.println("   " + match.getDate() + " " + match.getOtherTeamName() + " (" + match.getNewRating() + ")");
         }
 
+
+        // --------------------------------------------------------------------
+        //
+        // Fetch Team Opponent History
+        //
+        // --------------------------------------------------------------------
+
+        List<ArenaOpposingTeam> opponents = armory.fetchArenaTeamOpponentHistory(
+            team.getTeamSize(),
+            team.getRegionCode(),
+            team.getRealm(),
+            team.getName()
+        );
+
+        System.out.println("");
+        System.out.println("Top Opponents");
+
+        for (int i=0; i<10; i++) {
+            ArenaOpposingTeam opp = opponents.get(i);
+
+            System.out.println("   " + opp.getTeamName() + " (" + opp.getWins() + "W - " + opp.getLosses() + "L)");
+        }
+
     }
 
 }

@@ -16,13 +16,23 @@ import java.util.List;
  * @author <a href="mailto:odonnellt@gmail.com">Tim O'Donnell</a>
  */
 public class ArenaMatchTeam {
+
+
+    // ----------------------------------------------------- Instance Variables
+
+
     private boolean m_deleted;
     private String m_name;
     private int m_newRating;
     private int m_ratingDelta;
     private String m_realm;
     private String m_result;
+
     private List<ArenaMatchTeamMember> m_members;
+
+
+    // ------------------------------------------------------ Getters / Setters
+    
 
     public boolean isDeleted() {
         return m_deleted;

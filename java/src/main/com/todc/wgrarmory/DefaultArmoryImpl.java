@@ -746,8 +746,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
 
     /**
-     * Fetch arena team members for the given team. At a minimum, the following
-     * fields must be set on the given team: regionCode, realm, name, teamSize.
+     * Fetch arena team members for the given team.
      *
      * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
      *        ArenaFilter
@@ -807,6 +806,19 @@ public class DefaultArmoryImpl extends AbstractArmory {
     }
 
 
+    /**
+     * Fetch arena matches for the given team.
+     *
+     * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
+     *        ArenaFilter
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param realmName Name of realm
+     * @param teamName Name of arena team
+     *
+     * @return List of matching ArenaMatch objects
+     *
+     * @throws Exception
+     */
     @SuppressWarnings("unchecked")
     public List<ArenaMatch> fetchArenaTeamMatchHistory(int ladder, String regionCode, String realmName, String teamName)
             throws Exception
@@ -844,6 +856,59 @@ public class DefaultArmoryImpl extends AbstractArmory {
         }
 
         return matches;
+    }
+
+
+    /**
+     * Fetch opponent history for the given team.
+     *
+     * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
+     *        ArenaFilter
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param realmName Name of realm
+     * @param teamName Name of arena team
+     *
+     * @return List of matching ArenaOpposingTeam objects
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public List<ArenaOpposingTeam> fetchArenaTeamOpponentHistory(int ladder, String regionCode, String realmName,
+                                                                 String teamName)
+            throws Exception
+    {
+        String armoryHost = getArmoryHost(regionCode);
+        String r = URLEncoder.encode(realmName, UTF8);
+        String t = URLEncoder.encode(teamName, UTF8);
+
+        String url = "http://" + armoryHost + "/arena-team-report-opposing-teams.xml?rhtml=n&r=" + r + "&ts=" + ladder + "&t=" + t;
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+
+        List<ArenaOpposingTeam> teams = new ArrayList<ArenaOpposingTeam>();
+
+        List<Element> xmlTeams = root.getChild("arenaGameOpposingTeamsReport")
+                                     .getChildren("opposingTeam");
+
+        for (Element elTeam : xmlTeams) {
+            ArenaOpposingTeam team = new ArenaOpposingTeam();
+
+            team.setDeleted(elTeam.getAttribute("deleted").getBooleanValue());
+            team.setGames(elTeam.getAttribute("games").getIntValue());
+            team.setLosses(elTeam.getAttribute("losses").getIntValue());
+            team.setMla(elTeam.getAttribute("mla").getIntValue());
+            team.setRatingDelta(elTeam.getAttribute("rd").getIntValue());
+            team.setRealm(elTeam.getAttributeValue("realm"));
+            team.setTeamName(elTeam.getAttributeValue("teamName"));
+            team.setWinPct(elTeam.getAttribute("winPer").getDoubleValue());
+            team.setWins(elTeam.getAttribute("wins").getIntValue());
+
+            teams.add(team);
+        }
+
+        return teams;
     }
 
 

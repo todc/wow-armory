@@ -280,8 +280,7 @@ public interface Armory {
 
 
     /**
-     * Fetch arena team members for the given team. At a minimum, the following
-     * fields must be set on the given team: regionCode, realm, name, teamSize.
+     * Fetch arena team members for the given team.
      *
      * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
      *        ArenaFilter
@@ -297,7 +296,40 @@ public interface Armory {
             throws Exception;
 
 
+    /**
+     * Fetch arena matches for the given team.
+     *
+     * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
+     *        ArenaFilter
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param realmName Name of realm
+     * @param teamName Name of arena team
+     *
+     * @return List of matching ArenaMatch objects
+     *
+     * @throws Exception
+     */
     public List<ArenaMatch> fetchArenaTeamMatchHistory(int ladder, String regionCode, String realmName, String teamName)
             throws Exception;
+
+
+    /**
+     * Fetch opponent history for the given team.
+     *
+     * @param ladder Ladder type (e.g. 2v2, 3v3, 5v5). See constants in
+     *        ArenaFilter
+     * @param regionCode Region code (e.g. US, EU, etc)
+     * @param realmName Name of realm
+     * @param teamName Name of arena team
+     *
+     * @return List of matching ArenaOpposingTeam objects
+     *
+     * @throws Exception
+     */
+    public List<ArenaOpposingTeam> fetchArenaTeamOpponentHistory(int ladder, String regionCode, String realmName,
+                                                                 String teamName)
+            throws Exception;
+
+
 
 }
