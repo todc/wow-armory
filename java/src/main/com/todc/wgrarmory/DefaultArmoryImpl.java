@@ -1101,8 +1101,6 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
         String url = "http://" + armoryHost + "/arena-game.xml?rhtml=n&gid=" + matchId + "&b=" + bg;
 
-        System.out.println("url = " + url);
-
         String responseBody = this.httpGet(url);
 
         Element root = toXml(responseBody);
@@ -1157,6 +1155,93 @@ public class DefaultArmoryImpl extends AbstractArmory {
         }
 
         return match;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public List<Item> fetchItems(ItemFilter filter) throws Exception {
+        String url = "http://www.wowarmory.com/search.xml?rhtml=n&searchType=items";
+
+        if (filter.getRarity() != null) {
+            url += "&fl[rrt]=" + filter.getRarity();
+        }
+
+        if (filter.getMinReqLevel() > 0) {
+            url += "&fl[rqrMin]=" + filter.getMinReqLevel();
+        }
+        if (filter.getMaxReqLevel() > 0) {
+            url += "&fl[rqrMax]=" + filter.getMaxReqLevel();
+        }
+
+        if (filter.getSource() != null) {
+            url += "&fl[source]=" + filter.getSource();
+
+            // if the source is 'dungeon'...
+            if (filter.getSource().equals(ItemFilter.SOURCE_DUNGEON)) {
+
+                // specify a difficulty
+                if (filter.getDungeonDifficulty() == null) {
+                    url += "&fl[difficulty]=all";
+                } else {
+                    url += "&fl[difficulty]=" + filter.getDungeonDifficulty();
+                }
+
+                // specify a dungeon
+                if (filter.getDungeon() == null) {
+                    url += "&fl[dungeon]=dungeonall";
+                } else {
+                    url += "&fl[dungeon]=" + filter.getDungeon();
+                }
+            }
+        }
+
+        if (filter.getItemType() != null) {
+            url += "&fl[type]=" + filter.getItemType();
+        }
+
+        // add any other fields that we haven't yet accounted for in this API
+        for (Map.Entry<String,String> entry : filter.getOtherCriteria().entrySet()) {
+            url += "&" + entry.getKey() + "=" + entry.getValue();
+        }
+
+        String responseBody = this.httpGet(url);
+
+        Element root = toXml(responseBody);
+
+        List<Element> xmlItems = root.getChild("armorySearch")
+                                     .getChild("searchResults")
+                                     .getChild("items")
+                                     .getChildren("item");
+
+        List<Item> items = new ArrayList<Item>();
+
+        for (Element elItem : xmlItems) {
+            Item item = new Item();
+            item.setId(elItem.getAttribute("id").getIntValue());
+            item.setName(elItem.getAttributeValue("name"));
+
+            List<Element> xmlItemFilters = elItem.getChildren("filter");
+            for (Element elItemFilter : xmlItemFilters) {
+                String name = elItemFilter.getAttributeValue("name");
+
+                if (name.equals("itemLevel")) {
+                    item.setItemLevel(elItemFilter.getAttribute("value").getIntValue());
+                } else if (name.equals("source")) {
+                    String value = elItemFilter.getAttributeValue("value");
+
+                    if (!value.equals("sourceType.gameObjectDrop")) {
+                        item.setAreaId(elItemFilter.getAttribute("areaId").getIntValue());
+                        item.setAreaKey(elItemFilter.getAttributeValue("areaKey"));
+                        item.setCreatureId(elItemFilter.getAttribute("creatureId").getIntValue());
+                        item.setDifficulty(elItemFilter.getAttributeValue("difficulty"));
+                    }
+                }
+            }
+
+            items.add(item);
+        }
+
+        return items;
     }
 
 

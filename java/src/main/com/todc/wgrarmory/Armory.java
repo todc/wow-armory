@@ -368,4 +368,7 @@ public interface Armory {
     public ArenaMatch fetchArenaMatchDetails(String regionCode, String battlegroup, long matchId)
             throws Exception;
 
+
+    public List<Item> fetchItems(ItemFilter filter) throws Exception;
+
 }
