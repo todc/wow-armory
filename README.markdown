@@ -34,10 +34,10 @@ Requirements
 * SLF4J 1.6 (included) - http://www.slf4j.org
 
 
-Building wgr-armory
--------------------
+Building
+--------
 
-Pre-compiled binaries can be downloaded from:
+Tagged releases can be downloaded from:
 
 <http://github.com/todc/wgr-armory/downloads>
 
@@ -82,6 +82,11 @@ Another nice feature includes being able limit which characters are returned whe
     armory.fetchGuild("Gentlemen of Leisure", "Dawnbringer", "US");
 
 This will return only characters of level 80+ in the guild roster.
+
+Any of the Armory methods can be requested through a custom proxy, which can be specified at any time:
+
+    Armory armory = new DefaultArmoryImpl();
+    armory.setProxy("192.168.0.1", 8000);
 
 Additional examples of most of the libraries features can be found in the `examples` directory of the source tree at:
 
