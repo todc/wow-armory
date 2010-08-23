@@ -1,11 +1,3 @@
-/*
- * $Id$
- *
- * Copyright (c)2010, Tim O'Donnell. All Rights Reserved.
- *
- * This code may not be used or reproduced in part or in whole without
- * express written permission of Tim O'Donnell.
- */
 package com.todc.wgrarmory.model;
 
 
