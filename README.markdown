@@ -79,7 +79,7 @@ Another nice feature includes being able limit which characters are returned whe
 
     Armory armory = new DefaultArmoryImpl();
     armory.setFetchMinLevel(80);
-    armory.fetchGuild("Gentlemen of Leisure", "Dawnbringer", "US");
+    Guild guild = armory.fetchGuild("Gentlemen of Leisure", "Dawnbringer", "US");
 
 This will return only characters of level 80+ in the guild roster.
 
