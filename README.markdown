@@ -30,8 +30,8 @@ Requirements
 ------------
 
 * JDK 1.5
-* JDOM 1.1 (included)
-* SLF4J 1.6 (included)
+* JDOM 1.1 (included) - http://www.jdom.org
+* SLF4J 1.6 (included) - http://www.slf4j.org
 
 
 Building wgr-armory
@@ -46,6 +46,46 @@ You can also download the source and compile it yourself:
     $ git://github.com/todc/wgr-armory.git
     $ cd wgr-armory/java
     $ ant
+
+
+Usage
+-----
+
+Using wgr-armory in your project is a simple matter of copying the required jar files to your classpath. In addition to the wgr-armory.jar file, you'll also need to include the JDOM and SLF4J API libraries, both of which are included in the distribution.
+
+The main class you'll interact with is the `Armory` class. Simply instantiate it and call any of its public methods to interact with the WoW Armory.
+
+For example, to obtain basic character data:
+
+    Armory armory = new DefaultArmoryImpl();
+    PlayerCharacter character = armory.fetchCharacter("US", "Dawnbringer", "Gogan");
+
+Each method of the Armory class corresponds to a single HTTP request to the Armory.
+
+Some methods, such as `fetchCharacter` and `fetchCharacterAchievements` can return a lot of data, some of which may not be necessary or desired. All of this data is returned from the Armory, however, you can choose to omit some of this data from the resulting java objects. This is helpful if you don't need some of this data and want to save on memory.
+
+For example, you can limit exactly what fields of the `PlayerCharacter` object are populated:
+
+    Armory armory = new DefaultArmoryImpl();
+    armory.setFetchCharacterTalents(false);
+    armory.setFetchCharacterProfessions(false);
+    armory.setFetchCharacterItems(false);
+    armory.setFetchCharacterArenaTeams(false);
+    armory.setFetchCharacterBaseStats(false);
+
+The resulting `PlayerCharacter` object will only contain high-level info such as name, race, gender, class, level, guild, etc.
+
+Another nice feature includes being able limit which characters are returned when fetching a guild's roster. For example:
+
+    Armory armory = new DefaultArmoryImpl();
+    armory.setFetchMinLevel(80);
+    armory.fetchGuild("US", "Dawnbringer", "Gentlemen of Leisure");
+
+This will return only characters of level 80+ in the guild roster.
+
+Additional examples of most of the libraries features can be found in the `examples` directory of the source tree at:
+
+<http://github.com/todc/wgr-armory/tree/master/java/src/examples/>
 
 
 Mailing list
