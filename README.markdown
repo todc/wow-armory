@@ -29,7 +29,7 @@ The first version of this library is written in Java. The goal is to eventually 
 Requirements
 ------------
 
-* JDK 1.5
+* Java 1.5
 * JDOM 1.1 (included) - http://www.jdom.org
 * SLF4J 1.6 (included) - http://www.slf4j.org
 
@@ -114,7 +114,7 @@ Please contribute fixes and features. You can find issues to work on in the [Iss
 License
 -------
 
-This software is provided under an MIT open source license, read the `LICENSE.txt` file for details.
+This software is provided under an MIT open source license. Read the `LICENSE.txt` file for details.
 
 
 Copyright
