@@ -58,7 +58,7 @@ The main class you'll interact with is the `Armory` class. Simply instantiate it
 For example, to obtain basic character data:
 
     Armory armory = new DefaultArmoryImpl();
-    PlayerCharacter character = armory.fetchCharacter("US", "Dawnbringer", "Gogan");
+    PlayerCharacter character = armory.fetchCharacter("Gogan", "Dawnbringer", "US");
 
 Each method of the Armory class corresponds to a single HTTP request to the Armory.
 
@@ -79,7 +79,7 @@ Another nice feature includes being able limit which characters are returned whe
 
     Armory armory = new DefaultArmoryImpl();
     armory.setFetchMinLevel(80);
-    armory.fetchGuild("US", "Dawnbringer", "Gentlemen of Leisure");
+    armory.fetchGuild("Gentlemen of Leisure", "Dawnbringer", "US");
 
 This will return only characters of level 80+ in the guild roster.
 
