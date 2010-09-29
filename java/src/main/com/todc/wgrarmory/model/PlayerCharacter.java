@@ -75,21 +75,21 @@ public class PlayerCharacter {
 
 
     private String m_name;
-    private int m_playerClass;
-    private int m_gender;
-    private int m_faction;
-    private int m_race;
-    private int m_level;
-    private int m_rank;
+    private Integer m_playerClass;
+    private Integer m_gender;
+    private Integer m_faction;
+    private Integer m_race;
+    private Integer m_level;
+    private Integer m_rank;
 
     private String m_battlegroup;
     private String m_guildName;
     private String m_realm;
     private String m_region;
     private String m_title;
-    private int m_titleId;
+    private Integer m_titleId;
 
-    private int m_achievementPoints;
+    private Integer m_achievementPoints;
 
     private BaseStats m_baseStats;
 
@@ -111,51 +111,51 @@ public class PlayerCharacter {
         m_name = name;
     }
 
-    public int getRace() {
+    public Integer getRace() {
         return m_race;
     }
 
-    public void setRace(int race) {
+    public void setRace(Integer race) {
         m_race = race;
     }
 
-    public int getGender() {
+    public Integer getGender() {
         return m_gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(Integer gender) {
         m_gender = gender;
     }
 
-    public int getPlayerClass() {
+    public Integer getPlayerClass() {
         return m_playerClass;
     }
 
-    public void setPlayerClass(int playerClass) {
+    public void setPlayerClass(Integer playerClass) {
         m_playerClass = playerClass;
     }
 
-    public int getFaction() {
+    public Integer getFaction() {
         return m_faction;
     }
 
-    public void setFaction(int faction) {
+    public void setFaction(Integer faction) {
         m_faction = faction;
     }
 
-    public int getLevel() {
+    public Integer getLevel() {
         return m_level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(Integer level) {
         m_level = level;
     }
 
-    public int getRank() {
+    public Integer getRank() {
         return m_rank;
     }
 
-    public void setRank(int rank) {
+    public void setRank(Integer rank) {
         m_rank = rank;
     }
 
@@ -199,19 +199,19 @@ public class PlayerCharacter {
         m_title = title;
     }
 
-    public int getTitleId() {
+    public Integer getTitleId() {
         return m_titleId;
     }
 
-    public void setTitleId(int titleId) {
+    public void setTitleId(Integer titleId) {
         m_titleId = titleId;
     }
 
-    public int getAchievementPoints() {
+    public Integer getAchievementPoints() {
         return m_achievementPoints;
     }
 
-    public void setAchievementPoints(int achievementPoints) {
+    public void setAchievementPoints(Integer achievementPoints) {
         m_achievementPoints = achievementPoints;
     }
 
@@ -262,7 +262,7 @@ public class PlayerCharacter {
     public void setBaseStats(BaseStats baseStats) {
         m_baseStats = baseStats;
     }
-    
+
 
     // --------------------------------------------------------- Public Methods
 
@@ -284,6 +284,16 @@ public class PlayerCharacter {
     public TalentSpec getSecondaryTalentSpec() {
         for (TalentSpec t : m_talentSpecs) {
             if (t.getNumber() == 2) {
+                return t;
+            }
+        }
+
+        return null;
+    }
+
+    public TalentSpec getActiveTalentSpec() {
+        for (TalentSpec t : m_talentSpecs) {
+            if (t.isActive()) {
                 return t;
             }
         }
