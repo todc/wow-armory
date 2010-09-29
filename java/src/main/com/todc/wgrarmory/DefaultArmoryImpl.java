@@ -147,7 +147,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
         String xml = this.httpGet(url);
 
         if (!isCharacterFound(xml)) {
-            throw new CharacterNotFoundException(regionCode + "-" + charName + " not found in armory (" + xml.length() + ")");
+            throw new CharacterNotFoundException(regionCode + "-" + charName + " not found in armory");
         }
 
         Element root = toXml(xml);
@@ -277,93 +277,101 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
         // Fetch arena team info?
         if (fetchCharacterArenaTeams) {
-            List<Element> xmlArenaTeams = root.getChild("characterInfo")
-                                              .getChild("character")
-                                              .getChild("arenaTeams")
-                                              .getChildren("arenaTeam");
+            try {
+                List<Element> xmlArenaTeams = root.getChild("characterInfo")
+                                                  .getChild("character")
+                                                  .getChild("arenaTeams")
+                                                  .getChildren("arenaTeam");
 
-            for (Element elTeam : xmlArenaTeams) {
-                ArenaTeam team = new ArenaTeam();
-                team.setBattlegroup(elTeam.getAttributeValue("battleGroup"));
+                for (Element elTeam : xmlArenaTeams) {
+                    ArenaTeam team = new ArenaTeam();
+                    team.setBattlegroup(elTeam.getAttributeValue("battleGroup"));
 
-                long time = elTeam.getAttribute("created").getLongValue();
-                team.setCreated(new Date(time));
-                team.setFaction(elTeam.getAttribute("factionId").getIntValue());
-                team.setGamesPlayed(elTeam.getAttribute("gamesPlayed").getIntValue());
-                team.setGamesWon(elTeam.getAttribute("gamesWon").getIntValue());
-                team.setLastSeasonRank(elTeam.getAttribute("lastSeasonRanking").getIntValue());
-                team.setName(elTeam.getAttributeValue("name"));
-                team.setRank(elTeam.getAttribute("ranking").getIntValue());
-                team.setRating(elTeam.getAttribute("rating").getIntValue());
-                team.setRealm(elTeam.getAttributeValue("realm"));
-                team.setRegionCode(regionCode.toUpperCase());
-                team.setSeasonGamesPlayed(elTeam.getAttribute("seasonGamesPlayed").getIntValue());
-                team.setSeasonGamesWon(elTeam.getAttribute("seasonGamesWon").getIntValue());
-                team.setSize(elTeam.getAttribute("size").getIntValue());
-                team.setTeamSize(elTeam.getAttribute("teamSize").getIntValue());
+                    long time = elTeam.getAttribute("created").getLongValue();
+                    team.setCreated(new Date(time));
+                    team.setFaction(elTeam.getAttribute("factionId").getIntValue());
+                    team.setGamesPlayed(elTeam.getAttribute("gamesPlayed").getIntValue());
+                    team.setGamesWon(elTeam.getAttribute("gamesWon").getIntValue());
+                    team.setLastSeasonRank(elTeam.getAttribute("lastSeasonRanking").getIntValue());
+                    team.setName(elTeam.getAttributeValue("name"));
+                    team.setRank(elTeam.getAttribute("ranking").getIntValue());
+                    team.setRating(elTeam.getAttribute("rating").getIntValue());
+                    team.setRealm(elTeam.getAttributeValue("realm"));
+                    team.setRegionCode(regionCode.toUpperCase());
+                    team.setSeasonGamesPlayed(elTeam.getAttribute("seasonGamesPlayed").getIntValue());
+                    team.setSeasonGamesWon(elTeam.getAttribute("seasonGamesWon").getIntValue());
+                    team.setSize(elTeam.getAttribute("size").getIntValue());
+                    team.setTeamSize(elTeam.getAttribute("teamSize").getIntValue());
 
-                // get team members
-                List<Element> xmlMembers = elTeam.getChild("members").getChildren("character");
-                for (Element elMember : xmlMembers) {
-                    ArenaTeamMember member = new ArenaTeamMember();
-                    member.setBattlegroup(elMember.getAttributeValue("battleGroup"));
-                    member.setClassId(elMember.getAttribute("classId").getIntValue());
-                    member.setContribution(elMember.getAttribute("contribution").getIntValue());
-                    member.setGamesPlayed(elMember.getAttribute("gamesPlayed").getIntValue());
-                    member.setGamesWon(elMember.getAttribute("gamesWon").getIntValue());
-                    member.setGenderId(elMember.getAttribute("genderId").getIntValue());
-                    member.setGuildId(elMember.getAttribute("guildId").getLongValue());
-                    member.setGuildName(elMember.getAttributeValue("guild"));
-                    member.setName(elMember.getAttributeValue("name"));
-                    member.setRaceId(elMember.getAttribute("raceId").getIntValue());
-                    member.setRealm(character.getRealm());
-                    member.setRegionCode(regionCode.toUpperCase());
-                    member.setSeasonGamesPlayed(elMember.getAttribute("seasonGamesPlayed").getIntValue());
-                    member.setSeasonGamesWon(elMember.getAttribute("seasonGamesWon").getIntValue());
-                    member.setTeamRank(elMember.getAttribute("teamRank").getIntValue());
+                    // get team members
+                    List<Element> xmlMembers = elTeam.getChild("members").getChildren("character");
+                    for (Element elMember : xmlMembers) {
+                        ArenaTeamMember member = new ArenaTeamMember();
+                        member.setBattlegroup(elMember.getAttributeValue("battleGroup"));
+                        member.setClassId(elMember.getAttribute("classId").getIntValue());
+                        member.setContribution(elMember.getAttribute("contribution").getIntValue());
+                        member.setGamesPlayed(elMember.getAttribute("gamesPlayed").getIntValue());
+                        member.setGamesWon(elMember.getAttribute("gamesWon").getIntValue());
+                        member.setGenderId(elMember.getAttribute("genderId").getIntValue());
+                        member.setGuildId(elMember.getAttribute("guildId").getLongValue());
+                        member.setGuildName(elMember.getAttributeValue("guild"));
+                        member.setName(elMember.getAttributeValue("name"));
+                        member.setRaceId(elMember.getAttribute("raceId").getIntValue());
+                        member.setRealm(character.getRealm());
+                        member.setRegionCode(regionCode.toUpperCase());
+                        member.setSeasonGamesPlayed(elMember.getAttribute("seasonGamesPlayed").getIntValue());
+                        member.setSeasonGamesWon(elMember.getAttribute("seasonGamesWon").getIntValue());
+                        member.setTeamRank(elMember.getAttribute("teamRank").getIntValue());
 
-                    team.addTeamMember(member);
+                        team.addTeamMember(member);
+                    }
+
+                    character.addArenaTeam(team);
                 }
-
-                character.addArenaTeam(team);
+            } catch (Exception ex) {
+                // ignore xml errors here
             }
         }
 
         // Fetch talents?
         if (fetchCharacterTalents) {
-            Element elTalentSpecs = root.getChild("characterInfo").getChild("characterTab").getChild("talentSpecs");
-            List<Element> xmlTalentSpecs = elTalentSpecs.getChildren("talentSpec");
-            for (Element elTalentSpec : xmlTalentSpecs) {
-                TalentSpec spec = new TalentSpec();
-                spec.setName(elTalentSpec.getAttributeValue("prim"));
-                spec.setNumber(elTalentSpec.getAttribute("group").getIntValue());
-                spec.setActive(elTalentSpec.getAttributeValue("active") != null);
-                spec.setTreeOne(elTalentSpec.getAttribute("treeOne").getIntValue());
-                spec.setTreeTwo(elTalentSpec.getAttribute("treeTwo").getIntValue());
-                spec.setTreeThree(elTalentSpec.getAttribute("treeThree").getIntValue());
+            try {
+                Element elTalentSpecs = root.getChild("characterInfo").getChild("characterTab").getChild("talentSpecs");
+                List<Element> xmlTalentSpecs = elTalentSpecs.getChildren("talentSpec");
+                for (Element elTalentSpec : xmlTalentSpecs) {
+                    TalentSpec spec = new TalentSpec();
+                    spec.setName(elTalentSpec.getAttributeValue("prim"));
+                    spec.setNumber(elTalentSpec.getAttribute("group").getIntValue());
+                    spec.setActive(elTalentSpec.getAttributeValue("active") != null);
+                    spec.setTreeOne(elTalentSpec.getAttribute("treeOne").getIntValue());
+                    spec.setTreeTwo(elTalentSpec.getAttribute("treeTwo").getIntValue());
+                    spec.setTreeThree(elTalentSpec.getAttribute("treeThree").getIntValue());
 
-                character.addTalentSpec(spec);
-            }
+                    character.addTalentSpec(spec);
+                }
 
-            // get active glyphs
-            List<Element> xmlGlyphs = root.getChild("characterInfo")
-                                          .getChild("characterTab")
-                                          .getChild("glyphs")
-                                          .getChildren("glyph");
+                // get active glyphs
+                List<Element> xmlGlyphs = root.getChild("characterInfo")
+                                              .getChild("characterTab")
+                                              .getChild("glyphs")
+                                              .getChildren("glyph");
 
-            TalentSpec primaryTalentSpec = character.getPrimaryTalentSpec();
+                TalentSpec primaryTalentSpec = character.getPrimaryTalentSpec();
 
-            for (Element elGlyph : xmlGlyphs) {
-                Glyph glyph = new Glyph();
-                glyph.setId(elGlyph.getAttribute("id").getIntValue());
-                glyph.setName(elGlyph.getAttributeValue("name"));
-                glyph.setEffect(elGlyph.getAttributeValue("effect"));
+                for (Element elGlyph : xmlGlyphs) {
+                    Glyph glyph = new Glyph();
+                    glyph.setId(elGlyph.getAttribute("id").getIntValue());
+                    glyph.setName(elGlyph.getAttributeValue("name"));
+                    glyph.setEffect(elGlyph.getAttributeValue("effect"));
 
-                String type = elGlyph.getAttributeValue("type");
-                if (type.equals("major")) glyph.setType(Glyph.MAJOR);
-                if (type.equals("minor")) glyph.setType(Glyph.MINOR);
+                    String type = elGlyph.getAttributeValue("type");
+                    if (type.equals("major")) glyph.setType(Glyph.MAJOR);
+                    if (type.equals("minor")) glyph.setType(Glyph.MINOR);
 
-                primaryTalentSpec.addGlyph(glyph);
+                    primaryTalentSpec.addGlyph(glyph);
+                }
+            } catch (Exception ex) {
+                // xml errors here aren't so important
             }
 
         }
@@ -393,28 +401,32 @@ public class DefaultArmoryImpl extends AbstractArmory {
 
         // Fetch professions?
         if (fetchCharacterProfessions) {
-            Element elProfessions = root.getChild("characterInfo").getChild("characterTab").getChild("professions");
-            List<Element> xmlSkills = elProfessions.getChildren("skill");
-            for (Element elSkill : xmlSkills) {
-                Profession prof = new Profession();
-                prof.setId(elSkill.getAttribute("id").getIntValue());
-                prof.setName(elSkill.getAttributeValue("name"));
-                prof.setMax(elSkill.getAttribute("max").getIntValue());
-                prof.setValue(elSkill.getAttribute("value").getIntValue());
+            try {
+                Element elProfessions = root.getChild("characterInfo").getChild("characterTab").getChild("professions");
+                List<Element> xmlSkills = elProfessions.getChildren("skill");
+                for (Element elSkill : xmlSkills) {
+                    Profession prof = new Profession();
+                    prof.setId(elSkill.getAttribute("id").getIntValue());
+                    prof.setName(elSkill.getAttributeValue("name"));
+                    prof.setMax(elSkill.getAttribute("max").getIntValue());
+                    prof.setValue(elSkill.getAttribute("value").getIntValue());
 
-                character.addProfession(prof);
-            }
+                    character.addProfession(prof);
+                }
 
-            Element elSecProfessions = root.getChild("characterInfo").getChild("characterTab").getChild("secondaryProfessions");
-            List<Element> xmlSecSkills = elSecProfessions.getChildren("skill");
-            for (Element elSkill : xmlSecSkills) {
-                Profession prof = new Profession();
-                prof.setId(elSkill.getAttribute("id").getIntValue());
-                prof.setName(elSkill.getAttributeValue("name"));
-                prof.setMax(elSkill.getAttribute("max").getIntValue());
-                prof.setValue(elSkill.getAttribute("value").getIntValue());
+                Element elSecProfessions = root.getChild("characterInfo").getChild("characterTab").getChild("secondaryProfessions");
+                List<Element> xmlSecSkills = elSecProfessions.getChildren("skill");
+                for (Element elSkill : xmlSecSkills) {
+                    Profession prof = new Profession();
+                    prof.setId(elSkill.getAttribute("id").getIntValue());
+                    prof.setName(elSkill.getAttributeValue("name"));
+                    prof.setMax(elSkill.getAttribute("max").getIntValue());
+                    prof.setValue(elSkill.getAttribute("value").getIntValue());
 
-                character.addSecondaryProfession(prof);
+                    character.addSecondaryProfession(prof);
+                }
+            } catch (Exception ex) {
+                // xml errors here aren't so important
             }
         }
 
@@ -1245,7 +1257,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
         for (Element element : xmlAchievs) {
             Achievement achievement = new Achievement();
 
-            achievement.setId(element.getAttribute("id").getIntValue());
+            achievement.setAchievementId(element.getAttribute("id").getIntValue());
 
             // should we fetch the title?
             if (fetchAchievementTitle) {
@@ -1274,14 +1286,14 @@ public class DefaultArmoryImpl extends AbstractArmory {
                         if (critElement.getAttribute("date") != null) {
                             Achievement achievCrit = new Achievement();
 
-                            achievCrit.setId(critElement.getAttribute("id").getIntValue());
+                            achievCrit.setAchievementId(critElement.getAttribute("id").getIntValue());
 
                             if (fetchAchievementTitle) {
                                 achievCrit.setTitle(critElement.getAttributeValue("name"));
                             }
 
                             if (fetchAchievementDescription) {
-                                achievCrit.setParentId(achievement.getId());
+                                achievCrit.setParentId(achievement.getAchievementId());
                             }
 
                             // e.g. 2009-12-13-06:00
