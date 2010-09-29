@@ -19,9 +19,16 @@ public interface Armory {
      *
      * @param ip IP address
      * @param port Port number
+     * @param username Username used to connect to proxy
+     * @param password Password used to connect to proxy
      */
-    public void setProxy(String ip, int port);
+    public void setProxy(String ip, int port, String username, String password);
     public Proxy getProxy();
+
+    public int getCurrentRequestCount();
+    public int getTotalRequestCount();
+    public void resetCurrentRequestCount();
+    public void resetTotalRequestCount();
 
     /**
      * Specify the lowest level character to return during fetchGuild. For
