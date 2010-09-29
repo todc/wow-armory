@@ -56,7 +56,7 @@ public class AchievementCategory {
     // ----------------------------------------------------- Instance Variables
 
 
-    private int m_id;
+    private Integer m_id;
     private String m_name;
     private List<Achievement> m_achievements = new ArrayList<Achievement>();
 
@@ -64,11 +64,11 @@ public class AchievementCategory {
     // ------------------------------------------------------ Getters / Setters
 
 
-    public int getId() {
+    public Integer getId() {
         return m_id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         m_id = id;
     }
 

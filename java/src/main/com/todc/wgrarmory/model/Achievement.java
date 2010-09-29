@@ -15,8 +15,8 @@ public class Achievement {
     // ----------------------------------------------------- Instance Variables
 
 
-    private int m_id;
-    private int m_parentId;
+    private Integer m_achievementId;
+    private Integer m_parentId;
     private String m_title;
     private String m_description;
     private Date m_completed;
@@ -28,12 +28,12 @@ public class Achievement {
     // ------------------------------------------------------ Getters / Setters
 
 
-    public int getId() {
-        return m_id;
+    public Integer getAchievementId() {
+        return m_achievementId;
     }
 
-    public void setId(int id) {
-        m_id = id;
+    public void setAchievementId(Integer achievementId) {
+        m_achievementId = achievementId;
     }
 
     public String getTitle() {
@@ -60,11 +60,11 @@ public class Achievement {
         m_completed = completed;
     }
 
-    public int getParentId() {
+    public Integer getParentId() {
         return m_parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(Integer parentId) {
         m_parentId = parentId;
     }
 
@@ -90,7 +90,7 @@ public class Achievement {
 
     public String toString() {
         StringBuffer sb = new StringBuffer("[");
-        sb.append("id = " + m_id + "; ");
+        sb.append("id = " + m_achievementId + "; ");
         sb.append("parentId = " + m_parentId + "; ");
         sb.append("title = " + m_title + "; ");
         sb.append("description = " + m_description + "; ");

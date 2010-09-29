@@ -35,7 +35,7 @@ public class Guild {
     private String m_realmName;
     private String m_regionCode;
     private String m_battlegroup;
-    private int m_faction;
+    private Integer m_faction;
 
     private List<PlayerCharacter> m_roster = new ArrayList<PlayerCharacter>();
 
@@ -75,11 +75,11 @@ public class Guild {
         m_battlegroup = battlegroup;
     }
 
-    public int getFaction() {
+    public Integer getFaction() {
         return m_faction;
     }
 
-    public void setFaction(int faction) {
+    public void setFaction(Integer faction) {
         m_faction = faction;
     }
 
