@@ -3,11 +3,9 @@ package com.todc.wgrarmory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
+import java.net.*;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -43,7 +41,12 @@ public abstract class AbstractArmory implements Armory {
     protected boolean fetchCharacterArenaTeams = true;
     protected boolean fetchCharacterBaseStats = true;
 
+    protected int m_totalRequestCount = 0;
+    protected int m_currentRequestCount = 0;
+
     private Proxy m_proxy;
+    private String m_proxyUsername;
+    private String m_proxyPassword;
 
 
     // ----------------------------------------------------------- Constructors
@@ -52,8 +55,11 @@ public abstract class AbstractArmory implements Armory {
     public AbstractArmory() {
         try {
             config = new Properties();
-            URL url = ClassLoader.getSystemResource("armory.properties");
-            config.load(url.openStream());
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream("armory.properties");
+            if (in == null) {
+                LOG.error("Can't find armory.properties!");
+            }
+            config.load(in);
         } catch (IOException ex) {
             LOG.warn("armory.properties was not found in the classpath", ex);
         }
@@ -63,8 +69,10 @@ public abstract class AbstractArmory implements Armory {
     // --------------------------------------------------------- Public Methods
 
 
-    public void setProxy(String ip, int port) {
+    public void setProxy(String ip, int port, String username, String password) {
         m_proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port));
+        m_proxyUsername = username;
+        m_proxyPassword = password;
     }
 
     public Proxy getProxy() {
@@ -151,22 +159,63 @@ public abstract class AbstractArmory implements Armory {
         this.fetchCharacterBaseStats = fetchCharacterBaseStats;
     }
 
+    public int getCurrentRequestCount() {
+        return m_currentRequestCount;
+    }
+
+    public void resetCurrentRequestCount() {
+        m_currentRequestCount = 0;
+    }
+
+    public int getTotalRequestCount() {
+        return m_totalRequestCount;
+    }
+
+    public void resetTotalRequestCount() {
+        m_totalRequestCount = 0;
+    }
+
 
     // ------------------------------------------------------ Protected Methods
 
 
     protected String httpGet(String sURL) throws Exception {
-        LOG.debug("Requesting URL: " + sURL);
+        LOG.debug("Requesting URL (" + m_currentRequestCount + "): " + sURL);
 
         URL url = new URL(sURL);
         HttpURLConnection conn;
         if (this.getProxy() == null) {
             conn = (HttpURLConnection)url.openConnection();
         } else {
+            // Alternatively set the proxy username/password using:
+            Authenticator.setDefault(new Authenticator() {
+              protected PasswordAuthentication getPasswordAuthentication() {
+                return new
+                   PasswordAuthentication(m_proxyUsername,m_proxyPassword.toCharArray());
+            }});
+            
             conn = (HttpURLConnection)url.openConnection(this.getProxy());
         }
 
-        conn.connect();
+        conn.setRequestProperty("Content-Type", "application/xml;charset=UTF-8");
+        conn.setInstanceFollowRedirects(false);
+
+        m_totalRequestCount++;
+        m_currentRequestCount++;
+
+        int attempts = 0;
+        boolean success = false;
+
+        while (!success && attempts < 3) {
+            try {
+                conn.connect();
+                success = true;
+            } catch (java.net.ConnectException ex) {
+                LOG.error("Connection timed out requesting " + sURL + " (proxy " + this.getProxy() + ")", ex);
+            }
+            
+            attempts++;
+        }
 
         int responseCode = conn.getResponseCode();
 
@@ -177,7 +226,7 @@ public abstract class AbstractArmory implements Armory {
         if (responseCode == HttpURLConnection.HTTP_OK)
         {
             StringBuffer responseBody = new StringBuffer();
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
 
             String line;
             while ((line = in.readLine()) != null){
@@ -210,6 +259,12 @@ public abstract class AbstractArmory implements Armory {
                 //
                 case HttpURLConnection.HTTP_INTERNAL_ERROR:
                     throw new UnknownArmoryException("Internal Server Error. HTTP Code " + responseCode);
+
+                //
+                // 302 redirect means the armory is down for maintenace 
+                //
+                case HttpURLConnection.HTTP_MOVED_TEMP:
+                    throw new DownForMaintenanceException("Armory is down for maintenance");
 
                 //
                 // Anything else that can go wrong
