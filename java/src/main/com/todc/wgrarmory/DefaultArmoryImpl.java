@@ -57,6 +57,19 @@ public class DefaultArmoryImpl extends AbstractArmory {
     // --------------------------------------------------------- Public Methods
 
 
+    public boolean isArmoryUp(String regionCode) throws Exception {
+        String armoryHost = getArmoryHost(regionCode);
+        String url = "http://" + armoryHost;
+
+        try {
+            String responseBody = this.httpGet(url);
+            return true;
+        } catch (DownForMaintenanceException mex) {
+            return false;
+        }
+    }
+
+
     /**
      * Retrieve guild info, including roster, from the Armory. Performs HTTP
      * request to guild-info.xml.
@@ -147,7 +160,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
         String xml = this.httpGet(url);
 
         if (!isCharacterFound(xml)) {
-            throw new CharacterNotFoundException(regionCode + "-" + charName + " not found in armory");
+            throw new CharacterNotFoundException(regionCode + "-" + realmName + " " + charName + " not found in armory");
         }
 
         Element root = toXml(xml);
@@ -489,7 +502,7 @@ public class DefaultArmoryImpl extends AbstractArmory {
         String responseBody = this.httpGet(url);
 
         if (!isCharacterFound(responseBody)) {
-            throw new CharacterNotFoundException(regionCode + "-" + charName + " not found in armory");
+            throw new CharacterNotFoundException(regionCode + "-" + realmName + " " + charName + " not found in armory");
         }
 
         Element root = toXml(responseBody);

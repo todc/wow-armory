@@ -24,6 +24,7 @@ public interface Armory {
      */
     public void setProxy(String ip, int port, String username, String password);
     public Proxy getProxy();
+    public void clearProxy();
 
     public int getCurrentRequestCount();
     public int getTotalRequestCount();
@@ -120,6 +121,17 @@ public interface Armory {
      */
     public void setFetchCharacterBaseStats(boolean val);
     public boolean isFetchCharacterBaseStats();
+
+
+    /**
+     * Determine if the specified region's armory is currently available.
+     * Returns true if it's up, false if it's down for maintenance.
+     *
+     * @param regionCode
+     * @return
+     * @throws Exception
+     */
+    public boolean isArmoryUp(String regionCode) throws Exception;
 
 
     /**

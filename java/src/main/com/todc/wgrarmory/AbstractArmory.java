@@ -79,6 +79,10 @@ public abstract class AbstractArmory implements Armory {
         return m_proxy;
     }
 
+    public void clearProxy() {
+        m_proxy = null;
+    }
+
     public int getFetchMinLevel() {
         return fetchMinLevel;
     }
@@ -199,6 +203,8 @@ public abstract class AbstractArmory implements Armory {
 
         conn.setRequestProperty("Content-Type", "application/xml;charset=UTF-8");
         conn.setInstanceFollowRedirects(false);
+        conn.setConnectTimeout(10000);
+        //conn.setReadTimeout(10 * 1000);
 
         m_totalRequestCount++;
         m_currentRequestCount++;
@@ -258,7 +264,7 @@ public abstract class AbstractArmory implements Armory {
                 // exist. Probably for other errors too.
                 //
                 case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                    throw new UnknownArmoryException("Internal Server Error. HTTP Code " + responseCode);
+                    throw new UnknownArmoryException("Internal Server Error (" + responseCode + ") from " + sURL);
 
                 //
                 // 302 redirect means the armory is down for maintenace 
@@ -270,7 +276,7 @@ public abstract class AbstractArmory implements Armory {
                 // Anything else that can go wrong
                 //
                 default:
-                    throw new UnknownArmoryException("Unknown armory error. HTTP Code " + responseCode);
+                    throw new UnknownArmoryException("Unknown armory error (" + responseCode + ") from " + sURL);
             }
 
         }
